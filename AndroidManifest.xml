@@ -14,9 +14,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="ArtistsActivity"></activity>
-        <activity android:name="AlbumsActivity"></activity>
-        <activity android:name="SongsActivity"></activity>
+        <activity android:name="EncodeActivity"></activity>
+        <activity android:name="ConverterActivity"></activity>
+        <activity android:name="DecodeActivity"></activity>
 
     </application>
 </manifest>
