@@ -20,23 +20,23 @@ public class HelloTabWidget extends TabActivity {
         Intent intent;  // Reusable Intent for each tab
 
         // Create an Intent to launch an Activity for the tab (to be reused)
-        intent = new Intent().setClass(this, ArtistsActivity.class);
+        intent = new Intent().setClass(this, EncodeActivity.class);
 
         // Initialize a TabSpec for each tab and add it to the TabHost
-        spec = tabHost.newTabSpec("artists").setIndicator("Artists",
+        spec = tabHost.newTabSpec("artists").setIndicator("Encode",
                           res.getDrawable(R.drawable.ic_tab_artists))
                       .setContent(intent);
         tabHost.addTab(spec);
 
         // Do the same for the other tabs
-        intent = new Intent().setClass(this, AlbumsActivity.class);
-        spec = tabHost.newTabSpec("albums").setIndicator("Albums",
+        intent = new Intent().setClass(this, ConverterActivity.class);
+        spec = tabHost.newTabSpec("albums").setIndicator("Converter",
                           res.getDrawable(R.drawable.ic_tab_albums))
                       .setContent(intent);
         tabHost.addTab(spec);
 
-        intent = new Intent().setClass(this, SongsActivity.class);
-        spec = tabHost.newTabSpec("songs").setIndicator("Songs",
+        intent = new Intent().setClass(this, DecodeActivity.class);
+        spec = tabHost.newTabSpec("songs").setIndicator("Decode",
                           res.getDrawable(R.drawable.ic_tab_songs))
                       .setContent(intent);
         tabHost.addTab(spec);
