@@ -9,7 +9,7 @@ public class DecodeActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         TextView textview = new TextView(this);
-        textview.setText("This is not a tab");
+        textview.setText("This is not a tab, YES IT IS!!");
         setContentView(textview);
     }
 }
