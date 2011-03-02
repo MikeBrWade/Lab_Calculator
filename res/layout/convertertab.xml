@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <AbsoluteLayout 
+    	android:id="@+id/linearLayout1" 
+    	xmlns:android="http://schemas.android.com/apk/res/android" android:layout_height="wrap_content" android:layout_width="wrap_content">
+        <TableLayout android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/tableLayout1" android:layout_x="0dp" android:layout_y="0dp" android:stretchColumns="1">
+            <TableRow android:id="@+id/tableRow1" android:layout_width="fill_parent" android:layout_height="wrap_content"></TableRow>
+            	<TextView  android:text="@string/mainTitleString" android:id="@+id/textView1" android:layout_height="wrap_content" android:layout_width="fill_parent" android:textStyle="bold" android:textSize="24px"></TextView>
+            	<TableRow  android:layout_height="wrap_content" android:id="@+id/tableRow2" android:layout_width="fill_parent">
+                		<TextView android:text="@string/decimalInputLabelText" android:id="@+id/textView2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:typeface="monospace"></TextView>
+                		<EditText android:text="" android:id="@+id/decText" android:layout_height="wrap_content" android:layout_width="wrap_content" android:inputType="numberDecimal"></EditText>
+            	</TableRow>
+            	<TableRow  android:id="@+id/tableRow3" android:layout_height="wrap_content" android:layout_width="match_parent">
+                		<TextView android:text="@string/hexInputLabelText" android:id="@+id/textView3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:typeface="monospace"></TextView>
+                		<EditText android:text="" android:layout_height="wrap_content" android:id="@+id/hexText" android:layout_width="wrap_content"></EditText>
+            	</TableRow>
+            	<TableRow android:id="@+id/tableRow4" android:layout_height="wrap_content" android:layout_width="match_parent">
+               			<TextView android:text="@string/binInputLabelText" android:id="@+id/textView4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:typeface="monospace" ></TextView>
+                		<EditText android:text="" android:id="@+id/binText" android:layout_width="wrap_content" android:layout_height="wrap_content" android:inputType="numberDecimal"></EditText>
+            	</TableRow>            
+        </TableLayout>
+        <TableLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/tableLayout2" android:layout_x="0dp" android:layout_y="170dp" android:stretchColumns="1">
+        	<TableRow android:id="@+id/tableRow5" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_gravity="center_horizontal" android:baselineAligned="true">
+                <RadioGroup android:layout_x="0dip" android:id="@+id/radioGroup1" android:layout_gravity="center_horizontal" 
+                	android:layout_height="wrap_content" android:layout_width="match_parent" android:layout_weight="1" android:orientation="horizontal">               
+                	<RadioButton android:id="@+id/radioButton1" android:layout_height="wrap_content" android:text="@string/decRadioText" 
+                		android:typeface="monospace" android:layout_width="150px" android:layout_gravity="center_horizontal" android:layout_weight="1" android:layout_marginLeft="40px"></RadioButton>
+                	<RadioButton android:id="@+id/radioButton2" android:layout_height="wrap_content" android:text="@string/hexRadioTex" 
+                		android:typeface="monospace" android:layout_width="150px" android:layout_gravity="center_horizontal" android:layout_weight="1"></RadioButton>
+                	<RadioButton android:id="@+id/radioButton3" android:layout_height="wrap_content" android:text="@string/binRadioText"
+						android:typeface="monospace" android:layout_width="150px" android:layout_gravity="center_horizontal" android:layout_weight="1"></RadioButton>
+                </RadioGroup>
+            </TableRow>
+        </TableLayout>
+    </AbsoluteLayout>
+  

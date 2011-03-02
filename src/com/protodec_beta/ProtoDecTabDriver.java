@@ -1,4 +1,4 @@
-package com.HelloTabWidget;
+package com.protodec_beta;
 
 import android.app.Activity;
 import android.app.TabActivity;
@@ -7,7 +7,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.TabHost;
 
-public class HelloTabWidget extends TabActivity {
+public class ProtoDecTabDriver extends TabActivity {
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,6 +41,6 @@ public class HelloTabWidget extends TabActivity {
                       .setContent(intent);
         tabHost.addTab(spec);
 
-        tabHost.setCurrentTab(2);
+        tabHost.setCurrentTab(1);
     }
 }

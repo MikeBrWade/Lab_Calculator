@@ -1,11 +1,12 @@
-package com.HelloTabWidget;
+package com.protodec_beta;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
 
 public class DecodeActivity extends Activity {
-    public void onCreate(Bundle savedInstanceState) {
+    @Override
+	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         TextView textview = new TextView(this);
