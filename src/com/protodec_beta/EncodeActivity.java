@@ -10,7 +10,7 @@ public class EncodeActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         TextView textview = new TextView(this);
-        textview.setText("This is the Encode tab");
+        textview.setText("This is the ENCODE tab");
         setContentView(textview);
     }
 }

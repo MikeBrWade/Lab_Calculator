@@ -7,19 +7,15 @@ import java.text.NumberFormat;
 //import com.protodec_beta.SetPreference;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
-import android.text.Html;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Display;
-import android.view.Gravity;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -27,11 +23,11 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.protodecbeta.R;
 
 
 public class ConverterActivity extends Activity implements OnClickListener, OnTouchListener {
@@ -116,8 +112,9 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		txtrotate = (TextView)findViewById(R.id.txtrotate);
 		txtcomp = (TextView)findViewById(R.id.txtcomp);
 		txtprecision = (TextView)findViewById(R.id.txtprecision);
-
+		
 		btn0 = (Button)findViewById(R.id.btn0);
+		
 		btn1 = (Button)findViewById(R.id.btn1);
 		btn2 = (Button)findViewById(R.id.btn2);
 		btn3 = (Button)findViewById(R.id.btn3);
@@ -127,6 +124,7 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		btn7 = (Button)findViewById(R.id.btn7);
 		btn8 = (Button)findViewById(R.id.btn8);
 		btn9 = (Button)findViewById(R.id.btn9);
+		
 		btnA = (Button)findViewById(R.id.btnA);
 		btnB = (Button)findViewById(R.id.btnB);
 		btnC = (Button)findViewById(R.id.btnC);
@@ -148,12 +146,13 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		btnNOT = (Button)findViewById(R.id.btnNOT);
 		btnXOR = (Button)findViewById(R.id.btnXOR);
 
+
 		radio_dec = (RadioButton) findViewById(R.id.radio_dec);
 		radio_hex = (RadioButton) findViewById(R.id.radio_hex);
 		radio_bin = (RadioButton) findViewById(R.id.radio_bin);
 
 		// Set Click Listeners
-		
+
 		btn0.setOnClickListener(this);
 		btn0.setOnTouchListener(this);
 		btn1.setOnClickListener(this);
@@ -217,30 +216,19 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		btnXOR.setOnClickListener(this);
 		btnXOR.setOnTouchListener(this);
 
-		//radio_dec.setOnClickListener(radio_listener);
-		//radio_dec.setOnTouchListener(this);
-		//radio_hex.setOnClickListener(radio_listener);
-		//radio_hex.setOnTouchListener(this);
-		//radio_bin.setOnClickListener(radio_listener);
-		//radio_bin.setOnTouchListener(this);
+		radio_dec.setOnClickListener(radio_listener);
+		radio_dec.setOnTouchListener(this);
+		radio_hex.setOnClickListener(radio_listener);
+		radio_hex.setOnTouchListener(this);
+		radio_bin.setOnClickListener(radio_listener);
+		radio_bin.setOnTouchListener(this);
 
 		//registerForContextMenu(btnNOT);
 
-		//mScreen = (RelativeLayout) findViewById(R.id.myScreen);
+		mScreen = (RelativeLayout) findViewById(R.id.myScreen);
 
 	}
-	@Override
-	public void onClick(View v) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public boolean onTouch(View v, MotionEvent event) {
-		// TODO Auto-generated method stub
-		return false;
-	}
 
-/*
 	//=============================================================    
 	//Background colour settings, 1 through 4    
 	private void setBackColor(int bckflag) {
@@ -423,6 +411,7 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 			}
 		}
 	}
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		//MenuInflater inflater = getMenuInflater();
 		//inflater.inflate(R.menu.menu, menu);
@@ -1135,7 +1124,8 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 	}
 	// Handles the click of the radio buttons   
 	private OnClickListener radio_listener = new OnClickListener() {
-		public void onClick(View v) {
+		public void onClick(View v) 
+		{
 			// Perform action on clicks
 			if(v==radio_dec) {
 				setDecButtons();
@@ -1151,6 +1141,8 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 			}
 		}
 	};
+	
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle item selection
 		switch (item.getItemId()) {
@@ -1182,7 +1174,7 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
     	HelpDialog.show();
         return true;
 		 */
-		/*	
+		/*
     case R.id.mnuClear:
 		clearDisp();
 		secondflag=0;
@@ -1194,18 +1186,20 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
     case R.id.mnuExit:
         finish();
         return true;
-
+*/
 		default:
 			return super.onOptionsItemSelected(item);
 		}
 	}
 	//Context menu for ones and two complement    
+	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,ContextMenuInfo menuInfo) {  
 		super.onCreateContextMenu(menu, v, menuInfo);  
 		menu.setHeaderTitle("Set complement");  
 		menu.add(0, 1, 0, "1s complement (NOT)");  
 		menu.add(0, 2, 0, "2s complement (NOT+1)");  
 	}
+	@Override
 	public boolean onContextItemSelected(MenuItem item) {  
 		if(item.getItemId()==1){
 			decvalue = ~decvalue;
@@ -1221,6 +1215,7 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		return true;  
 	}
 	//This restores screen status after change of orientation    
+	@Override
 	protected void onPause() {
 		super.onPause();
 		String mode;
@@ -1256,7 +1251,7 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		logicflag = def_prefs.getBoolean("logicflag", true);
 		zerosflag = def_prefs.getBoolean("zerosflag", true);
 		shiftflag = def_prefs.getBoolean("shiftflag", false);
-		String tempst = def_prefs.getString("backgroundflag", "3");
+		String tempst = def_prefs.getString("backgroundflag", "1");
 		backgroundflag = Integer.valueOf(tempst);
 		setBackColor(backgroundflag);
 		tempst = def_prefs.getString("userbaseflag", "8");
@@ -1285,5 +1280,5 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		displayValues();
 		setCalcKeys();
 		setLogicKeys();
-	}*/
+	}
 }

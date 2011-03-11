@@ -133,12 +133,12 @@
     	    android:id="@+id/btnA"
         	android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-    	    android:text="  A " />
+    	    android:text="A" />
 	    <Button
     	    android:id="@+id/btnB"
         	android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-    	    android:text="B " />
+    	    android:text="B" />
 	    <Button
     	    android:id="@+id/btnC"
         	android:layout_width="wrap_content"
@@ -153,7 +153,7 @@
     	    android:id="@+id/btnE"
         	android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-    	    android:text="E " />
+    	    android:text="E" />
     	<Button
         	android:id="@+id/btnF"
 	        android:layout_width="wrap_content"
