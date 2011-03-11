@@ -4,9 +4,4 @@
     
     <string name="mainTitleString">Protocol Decoder v0.1.0</string>
     
-    <string name="decRadioText">DEC</string>
-    <string name="hexRadioTex">HEX</string>
-    <string name="binRadioText">BIN</string><string name="decimalInputLabelText">Decimal</string>
-    <string name="hexInputLabelText">Hex</string>
-    <string name="binInputLabelText">Bin</string>
 </resources>
