@@ -15,6 +15,7 @@
         <activity android:name="com.protodec_beta.ConverterActivity"></activity>
         <activity android:name="com.protodec_beta.DecodeActivity"></activity>
         <activity android:name="com.protodec_beta.EncodeActivity"></activity>
+        <activity android:name="com.protodec_beta.SetPreference"></activity>
 
     </application>
 </manifest>

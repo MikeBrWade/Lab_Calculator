@@ -2,20 +2,23 @@ package com.protodec_beta;
 
 import java.text.NumberFormat;
 
-//import com.protodec_beta.CustomizeDialog;
-//import com.protodec_beta.HelpDialog;
-//import com.protodec_beta.SetPreference;
+import com.protodec_beta.CustomizeDialog;
+import com.protodec_beta.HelpDialog;
+import com.protodec_beta.SetPreference;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.preference.PreferenceManager;
+import android.text.Html;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,7 +31,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.protodecbeta.R;
-
 
 public class ConverterActivity extends Activity implements OnClickListener, OnTouchListener {
 	private TextView lbldecimal;
@@ -79,9 +81,6 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 	private String decstring;
 	private String hexstring;
 	private String binstring;
-	private Vibrator myVib;
-	private boolean vibflag;
-	private int backgroundflag;
 	private int binbitsflag;
 	private boolean calcflag;
 	private boolean logicflag;
@@ -89,6 +88,12 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 	private boolean shiftflag;
 	private int secondflag;
 	private int calcstatus;
+	
+	private	boolean testFlag1;
+	private	boolean testFlag2;
+	private	boolean testFlag3;
+	private	boolean testFlag4;
+	private	boolean testFlag5;
 
 	private String tempstring;
 	RelativeLayout mScreen;
@@ -99,10 +104,28 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		// Sets my view to the default converterTab xml
 		setContentView(R.layout.convertertab);
-		//myVib = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
 
-		// Set variables
+		// Setup Text/Label Objects linking into layout
+		linkTextFieldsIntoControlObjects();
+		
+		// Setup Button Objects linking into layout
+		linkButtonObjects();
+
+		// Set Click Listeners
+		linkClickAndTouchListenerInterfaces();
+		
+
+		//registerForContextMenu(btnNOT);
+
+		mScreen = (RelativeLayout) findViewById(R.id.myScreen);
+
+	}
+	// A few functions to setup the initial view and objects
+	private void linkTextFieldsIntoControlObjects()
+	{
 		lbldecimal = (TextView)findViewById(R.id.lbldecimal);
 		txtdecimal = (TextView)findViewById(R.id.txtdecimal);
 		lblhex = (TextView)findViewById(R.id.lblhex);
@@ -112,9 +135,10 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		txtrotate = (TextView)findViewById(R.id.txtrotate);
 		txtcomp = (TextView)findViewById(R.id.txtcomp);
 		txtprecision = (TextView)findViewById(R.id.txtprecision);
-		
+	}
+	private void linkButtonObjects()
+	{
 		btn0 = (Button)findViewById(R.id.btn0);
-		
 		btn1 = (Button)findViewById(R.id.btn1);
 		btn2 = (Button)findViewById(R.id.btn2);
 		btn3 = (Button)findViewById(R.id.btn3);
@@ -150,9 +174,9 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		radio_dec = (RadioButton) findViewById(R.id.radio_dec);
 		radio_hex = (RadioButton) findViewById(R.id.radio_hex);
 		radio_bin = (RadioButton) findViewById(R.id.radio_bin);
-
-		// Set Click Listeners
-
+	}
+	private void linkClickAndTouchListenerInterfaces()
+	{
 		btn0.setOnClickListener(this);
 		btn0.setOnTouchListener(this);
 		btn1.setOnClickListener(this);
@@ -222,44 +246,9 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		radio_hex.setOnTouchListener(this);
 		radio_bin.setOnClickListener(radio_listener);
 		radio_bin.setOnTouchListener(this);
-
-		//registerForContextMenu(btnNOT);
-
-		mScreen = (RelativeLayout) findViewById(R.id.myScreen);
-
 	}
-
-	//=============================================================    
-	//Background colour settings, 1 through 4    
-	private void setBackColor(int bckflag) {
-		int color;
-		Resources res = getResources();
-		if(bckflag==1) {
-			color = res.getColor(R.color.black);
-		}
-		else if(bckflag==2) {
-			color = res.getColor(R.color.gold);
-		}
-		else if(bckflag==3) {
-			color = res.getColor(R.color.steelblue);
-		}
-		else if(bckflag==4) {
-			color = res.getColor(R.color.teal);
-		}
-		else if(bckflag==5) {
-			color = res.getColor(R.color.red);
-		}
-		else if(bckflag==6) {
-			color = res.getColor(R.color.purple);
-		}
-		else if(bckflag==7) {
-			color = res.getColor(R.color.brown);
-		}
-		else {
-			color = res.getColor(R.color.black);
-		}
-		mScreen.setBackgroundColor(color);
-	}
+	
+	// Flipping the activate/deactivate of the number pad
 	private void setDecButtons() {
 		btn0.setEnabled(true);
 		btn1.setEnabled(true);
@@ -314,10 +303,15 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		btnE.setEnabled(false);
 		btnF.setEnabled(false);
 	}
+	
 	private void setCalcKeys() {
+		// Grabbing the current display instance and the orientation flag
 		Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
 		int orient = display.getOrientation();
-		if((calcflag==true) & (orient==0)) {
+		
+		// Depending on the orientation and the presence of a current calculation, hide/show the input elements
+		if((calcflag==true) & (orient==0)) 
+		{
 			if (secondflag==0) {
 				btnPlus.setVisibility(View.VISIBLE);
 				btnMinus.setVisibility(View.VISIBLE);
@@ -377,9 +371,12 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 			}
 		}
 	}
+	
 	private void setLogicKeys() {
+		// Grabbing the current display instance and the orientation flag
 		Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
 		int orient = display.getOrientation();
+		//Depending on the orientation and the presence of a current logic operation, hide/show the input elements
 		if((logicflag==true) & (orient==0)) {
 			btnAND.setVisibility(View.VISIBLE);
 			btnOR.setVisibility(View.VISIBLE);
@@ -411,18 +408,21 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 			}
 		}
 	}
-	@Override
+	
+	//This is used to capture the menu action and create a menu instance
 	public boolean onCreateOptionsMenu(Menu menu) {
-		//MenuInflater inflater = getMenuInflater();
-		//inflater.inflate(R.menu.menu, menu);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.menu, menu);
 		return true;
 	}
-	//Do the vibrate	
+	
+	// capture onTouch to play around with the events etc
 	public boolean onTouch(View v, MotionEvent event) {
 		return false;
 	}
+	
 	//======================================================= 
-	//This code handles the button clicks 0 - F, BS and Clear	
+	//Captures all clicks from various buttons and dispatches their commands
 	public void onClick(View v) {   
 		char c;
 		String savstring;
@@ -833,6 +833,8 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 			}
 		}
 	}
+	
+	// Used to clear all the fields as well as the labels and reset the buttons
 	private void clearDisp() {
 		txtdecimal.setText("0");
 		txthex.setText("0");
@@ -848,57 +850,76 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		int color = res.getColor(R.color.black);
 		txtbinary.setTextColor(color);
 	}
+	
 	//========================================================
 	private void displayValues() {
-		String temp;
+		String parsedNumericString;
 		int color;
 		int kp, k;
 
+		// just playing with settings value retrieval
+		StringBuilder s = new StringBuilder(100);
+		s.append("1: ");
+		s.append(testFlag1);
+		s.append(" 2: ");
+		s.append(testFlag2);
+		s.append(" 3: ");
+		s.append(testFlag3);
+		s.append(" 4: ");
+		s.append(testFlag4);
+		s.append(" 5: ");
+		s.append(testFlag4);
+		
+		txtrotate.setText(s.toString());
+		
+		txtrotate.setVisibility(View.VISIBLE);
+		
 		//  Display decvalue on the 4 output fields
+		
 		decstring = Long.toString(decvalue);
 		hexstring = Long.toHexString(decvalue);
 		binstring = Long.toBinaryString(decvalue);
 
 		//  Decimal	
-		temp = NumberFormat.getInstance().format(decvalue);
-		txtdecimal.setText(temp);
+		parsedNumericString = NumberFormat.getInstance().format(decvalue);
+		txtdecimal.setText(parsedNumericString);
 
 		//  Hex	
-		temp = Long.toHexString(decvalue);
-		temp = temp.toUpperCase();
+		parsedNumericString = Long.toHexString(decvalue);
+		parsedNumericString = parsedNumericString.toUpperCase();
 
 		if (decvalue<128 && decvalue>=-128) {
-			if (temp.length()>2) {
-				temp = temp.substring(temp.length()-2);
+			if (parsedNumericString.length()>2) {
+				parsedNumericString = parsedNumericString.substring(parsedNumericString.length()-2);
 			}
 		}
 		else if (decvalue<32768 && decvalue>=-32768) {
-			if (temp.length()>4) {
-				temp = temp.substring(temp.length()-4);
+			if (parsedNumericString.length()>4) {
+				parsedNumericString = parsedNumericString.substring(parsedNumericString.length()-4);
 			}
 		}
 		else if (decvalue/2 < 1073741824 && decvalue/2 >=-1073741824) {
-			if (temp.length()>8) {
-				temp = temp.substring(temp.length()-8);
+			if (parsedNumericString.length()>8) {
+				parsedNumericString = parsedNumericString.substring(parsedNumericString.length()-8);
 			}
 		}
 
-		txthex.setText(padString(temp,4));
+		txthex.setText(padString(parsedNumericString,4));
 
 		Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
 		int orient = display.getOrientation();
 		Resources res = getResources();
 
 		//  Binary    
-		temp = Long.toBinaryString(decvalue);
+		parsedNumericString = Long.toBinaryString(decvalue);
 		if (binbitsflag==0) {
 			if (decvalue<16 && decvalue>=0) {
 				if (decvalue != 0 && zerosflag==true) {
 					txtprecision.setText("(4-bit)");
 					txtprecision.setVisibility(View.VISIBLE);
-					kp = 4 - temp.length();
+					kp = 4 - parsedNumericString.length();
 					for (k=1; k<=kp ; ++k) {
-						temp = "0" + temp;
+						parsedNumericString = "0" + parsedNumericString;
 					}
 				}
 				else {
@@ -906,8 +927,8 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 				}
 			}
 			else if (decvalue<256 && decvalue>=-128) {
-				if (temp.length()>8) {
-					temp = temp.substring(temp.length()-8);
+				if (parsedNumericString.length()>8) {
+					parsedNumericString = parsedNumericString.substring(parsedNumericString.length()-8);
 					txtprecision.setText("(8-bit)");
 					txtprecision.setVisibility(View.VISIBLE);
 				}
@@ -915,9 +936,9 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 					if (decvalue != 0 && zerosflag==true) {
 						txtprecision.setText("(8-bit)");
 						txtprecision.setVisibility(View.VISIBLE);
-						kp = 8 - temp.length();
+						kp = 8 - parsedNumericString.length();
 						for (k=1; k<=kp ; ++k) {
-							temp = "0" + temp;
+							parsedNumericString = "0" + parsedNumericString;
 						}
 					}
 					else {
@@ -926,8 +947,8 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 				}
 			}
 			else if (decvalue<65536 && decvalue>=-32768) {
-				if (temp.length()>16) {
-					temp = temp.substring(temp.length()-16);
+				if (parsedNumericString.length()>16) {
+					parsedNumericString = parsedNumericString.substring(parsedNumericString.length()-16);
 					txtprecision.setText("(16-bit)");
 					txtprecision.setVisibility(View.VISIBLE);
 				}
@@ -935,9 +956,9 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 					if (zerosflag==true) {
 						txtprecision.setText("(16-bit)");
 						txtprecision.setVisibility(View.VISIBLE);
-						kp = 16 - temp.length();
+						kp = 16 - parsedNumericString.length();
 						for (k=1; k<=kp ; ++k) {
-							temp = "0" + temp;
+							parsedNumericString = "0" + parsedNumericString;
 						}
 					}
 					else {
@@ -946,8 +967,8 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 				}
 			}
 			else if (decvalue/4 < 1073741824 && decvalue/2 >=-1073741824) {
-				if (temp.length()>32) {
-					temp = temp.substring(temp.length()-32);
+				if (parsedNumericString.length()>32) {
+					parsedNumericString = parsedNumericString.substring(parsedNumericString.length()-32);
 					txtprecision.setText("(32-bit)");
 					txtprecision.setVisibility(View.VISIBLE);
 				}
@@ -955,9 +976,9 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 					if (zerosflag==true) {
 						txtprecision.setText("(32-bit)");
 						txtprecision.setVisibility(View.VISIBLE);
-						kp = 32 - temp.length();
+						kp = 32 - parsedNumericString.length();
 						for (k=1; k<=kp ; ++k) {
-							temp = "0" + temp;
+							parsedNumericString = "0" + parsedNumericString;
 						}
 					}
 					else {
@@ -976,9 +997,9 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 					if (decvalue != 0) {
 						txtprecision.setText("(4-bit)");
 						txtprecision.setVisibility(View.VISIBLE);
-						kp = 4 - temp.length();
+						kp = 4 - parsedNumericString.length();
 						for (k=1; k<=kp ; ++k) {
-							temp = "0" + temp;
+							parsedNumericString = "0" + parsedNumericString;
 						}
 					}
 					else {
@@ -992,8 +1013,8 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 
 			else if (binbitsflag==8) {
 				if (decvalue<256 && decvalue>=-128) {
-					if (temp.length()>8) {
-						temp = temp.substring(temp.length()-8);
+					if (parsedNumericString.length()>8) {
+						parsedNumericString = parsedNumericString.substring(parsedNumericString.length()-8);
 						txtprecision.setText("(8-bit)");
 						txtprecision.setVisibility(View.VISIBLE);
 					}
@@ -1001,9 +1022,9 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 						if (decvalue != 0) {
 							txtprecision.setText("(8-bit)");
 							txtprecision.setVisibility(View.VISIBLE);
-							kp = 8 - temp.length();
+							kp = 8 - parsedNumericString.length();
 							for (k=1; k<=kp ; ++k) {
-								temp = "0" + temp;
+								parsedNumericString = "0" + parsedNumericString;
 							}
 						}
 						else {
@@ -1018,8 +1039,8 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 
 			else if (binbitsflag==16) {
 				if (decvalue<65536 && decvalue>=-32768) {
-					if (temp.length()>16) {
-						temp = temp.substring(temp.length()-16);
+					if (parsedNumericString.length()>16) {
+						parsedNumericString = parsedNumericString.substring(parsedNumericString.length()-16);
 						txtprecision.setText("(16-bit)");
 						txtprecision.setVisibility(View.VISIBLE);
 					}
@@ -1027,9 +1048,9 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 						if (decvalue != 0) {
 							txtprecision.setText("(16-bit)");
 							txtprecision.setVisibility(View.VISIBLE);
-							kp = 16 - temp.length();
+							kp = 16 - parsedNumericString.length();
 							for (k=1; k<=kp ; ++k) {
-								temp = "0" + temp;
+								parsedNumericString = "0" + parsedNumericString;
 							}
 						}
 						else {
@@ -1044,8 +1065,8 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 
 			else if (binbitsflag==32) {
 				if (decvalue/4 < 1073741824 && decvalue/2 >=-1073741824) {
-					if (temp.length()>32) {
-						temp = temp.substring(temp.length()-32);
+					if (parsedNumericString.length()>32) {
+						parsedNumericString = parsedNumericString.substring(parsedNumericString.length()-32);
 						txtprecision.setText("(32-bit)");
 						txtprecision.setVisibility(View.VISIBLE);
 					}
@@ -1053,9 +1074,9 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 						if (decvalue != 0) {
 							txtprecision.setText("(32-bit)");
 							txtprecision.setVisibility(View.VISIBLE);
-							kp = 32 - temp.length();
+							kp = 32 - parsedNumericString.length();
 							for (k=1; k<=kp ; ++k) {
-								temp = "0" + temp;
+								parsedNumericString = "0" + parsedNumericString;
 							}
 						}
 						else {
@@ -1069,39 +1090,41 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 			}
 		}
 
-		if ((temp.length()>=22) & (orient==0)) {
-			temp = temp.substring(temp.length()- 22);
+		if ((parsedNumericString.length()>=22) & (orient==0)) {
+			parsedNumericString = parsedNumericString.substring(parsedNumericString.length()- 22);
 			color = res.getColor(R.color.silver);
 			txtbinary.setTextColor(color);
-			txtrotate.setVisibility(View.VISIBLE);
+			//txtrotate.setVisibility(View.VISIBLE);
 		}
 		else{
 			color = res.getColor(R.color.black);
 			txtbinary.setTextColor(color);
-			txtrotate.setVisibility(View.INVISIBLE);
+			//txtrotate.setVisibility(View.INVISIBLE);
 		}
-		txtbinary.setText(padString(temp,4));
+		txtbinary.setText(padString(parsedNumericString,4));
 		txtcomp.setVisibility(View.INVISIBLE);
 	}
-	private String padString(String temp, int i) {
+	private String padString(String paddedString, int i) {
 		// Pads the string with spaces at the interval i
-		Integer n;
-		String temp1;
+		Integer tmpInteger;
+		String scratchPad;
 		char c;
-		temp = new StringBuilder(temp).reverse().toString();
-		n=0;
-		temp1="";
-		while(n<temp.length()) {
-			c = temp.charAt(n);
-			temp1 = temp1 + c;
-			if((n+1)%i==0) {
-				temp1 = temp1 + " ";	
+		paddedString = new StringBuilder(paddedString).reverse().toString();
+		tmpInteger=0;
+		scratchPad="";
+		while(tmpInteger<paddedString.length()) {
+			c = paddedString.charAt(tmpInteger);
+			scratchPad = scratchPad + c;
+			if((tmpInteger+1)%i==0) {
+				scratchPad = scratchPad + " ";	
 			}
-			n++;
+			tmpInteger++;
 		}
-		return temp = new StringBuilder(temp1).reverse().toString();
+		return paddedString = new StringBuilder(scratchPad).reverse().toString();
 	}
 	private char getButtonValue(View v) {
+		// There has to be a better way, 
+		//    could I pull the value and reinterpret? that would probably be more runtime expensive though
 		char c;
 		c = '0';
 		if(v==btn0)      { c = '0'; }
@@ -1142,51 +1165,49 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		}
 	};
 	
-	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle item selection
-		switch (item.getItemId()) {
-		/*    	CustomizeDialog customizeDialog = new CustomizeDialog(this);
-    	TextView title01 = (TextView)customizeDialog.findViewById(R.id.Title01);
-    	title01.setText("About ProtoDecoder");
-    	//ImageView img = (ImageView) customizeDialog.findViewById(R.id.ImageView01);
-    	//img.setImageResource(R.drawable.hexicon);
-    	TextView text = (TextView) customizeDialog.findViewById(R.id.TextView01);
-      	text.setGravity(Gravity.CENTER);
-      	text.setText(R.string.dialog_text);
-    	customizeDialog.show();
-    	return true;
-		 */
-		/*
-    case R.id.mnuSettings:
-    	startActivity(new Intent(HexPlus.this, SetPreference.class));
-    	return true;
+		switch (item.getItemId()){
+		case R.id.mnuAbout:
+			CustomizeDialog customizeDialog = new CustomizeDialog(this);
+			TextView title01 = (TextView)customizeDialog.findViewById(R.id.Title01);
+			String about_string = "<center><b><font color=#4682B4>ABOUT</font></b></center><br>" +
+			"<center>About ProtoDecoder</center><br><center>ProtoDec v1.5b</center>";			
+			title01.setText(Html.fromHtml(about_string));
+			TextView text = (TextView) customizeDialog.findViewById(R.id.TextView01);
+			//text.setGravity(Gravity.CENTER);
+			text.setText(R.string.about_body);
+			customizeDialog.show();
+			return true;
 
-    case R.id.mnuHelp:
-    	HelpDialog HelpDialog = new HelpDialog(this);
-    	TextView title02 = (TextView)HelpDialog.findViewById(R.id.Title01);
-    	title02.setText("Help information");
-    	TextView text1 = (TextView) HelpDialog.findViewById(R.id.TextView01);
-      	text1.setGravity(Gravity.LEFT);
-      	String help_string = "<b><font color=#4682B4>General usage</font></b><br>" +
-      		"Example Help dialoge ";
-      	text1.setText(Html.fromHtml(help_string));
-    	HelpDialog.show();
-        return true;
-		 */
-		/*
-    case R.id.mnuClear:
-		clearDisp();
-		secondflag=0;
-		calcstatus=0;
-		setCalcKeys();  
-		setLogicKeys();
-    	return true;
+		case R.id.mnuSettings:
+			startActivity(new Intent(ConverterActivity.this, SetPreference.class));
+			return true;
 
-    case R.id.mnuExit:
-        finish();
-        return true;
-*/
+		case R.id.mnuHelp:
+			HelpDialog HelpDialog = new HelpDialog(this);
+			TextView title02 = (TextView)HelpDialog.findViewById(R.id.Title01);
+			title02.setText("Help information");
+			TextView text1 = (TextView) HelpDialog.findViewById(R.id.TextView01);
+			text1.setGravity(Gravity.LEFT);
+			String help_string = "<b><font color=#4682B4>General usage</font></b><br>" +
+			"ProtoDec: THERE IS NO HELP......<br> Mike has doooooooooomed you!";
+			text1.setText(Html.fromHtml(help_string));
+			HelpDialog.show();
+			return true;
+
+		case R.id.mnuClear:
+			clearDisp();
+			secondflag=0;
+			calcstatus=0;
+			setCalcKeys();  
+			setLogicKeys();
+			return true;
+
+		case R.id.mnuExit:
+			finish();
+			return true;
+
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -1246,14 +1267,20 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		modeflag = tempstring.charAt(0);
 
 		SharedPreferences def_prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-		vibflag = def_prefs.getBoolean("vibflag", true);
+		
+		testFlag1 = def_prefs.getBoolean("testFlag1", true);
+		testFlag2 = def_prefs.getBoolean("testFlag2", true);
+		testFlag3 = def_prefs.getBoolean("testFlag3", true);
+		testFlag4 = def_prefs.getBoolean("testFlag4", true);
+		testFlag5 = def_prefs.getBoolean("testFlag5", true);
+		
+		
 		calcflag = def_prefs.getBoolean("calcflag", true);
 		logicflag = def_prefs.getBoolean("logicflag", true);
 		zerosflag = def_prefs.getBoolean("zerosflag", true);
 		shiftflag = def_prefs.getBoolean("shiftflag", false);
 		String tempst = def_prefs.getString("backgroundflag", "1");
-		backgroundflag = Integer.valueOf(tempst);
-		setBackColor(backgroundflag);
+	
 		tempst = def_prefs.getString("userbaseflag", "8");
 		tempst = def_prefs.getString("binbitsflag", "0");
 		binbitsflag = Integer.valueOf(tempst);
@@ -1282,3 +1309,41 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		setLogicKeys();
 	}
 }
+/* Saved Code Section
+//myVib = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
+ * 	private Vibrator myVib;
+	private boolean vibflag;
+	vibflag = def_prefs.getBoolean("vibflag", true);
+		//=============================================================    
+	//Background color settings, 1 through 4    
+	private void setBackColor(int bckflag) {
+		int color;
+		Resources res = getResources();
+		if(bckflag==1) {
+			color = res.getColor(R.color.black);
+		}
+		else if(bckflag==2) {
+			color = res.getColor(R.color.gold);
+		}
+		else if(bckflag==3) {
+			color = res.getColor(R.color.steelblue);
+		}
+		else if(bckflag==4) {
+			color = res.getColor(R.color.teal);
+		}
+		else if(bckflag==5) {
+			color = res.getColor(R.color.red);
+		}
+		else if(bckflag==6) {
+			color = res.getColor(R.color.purple);
+		}
+		else if(bckflag==7) {
+			color = res.getColor(R.color.brown);
+		}
+		else {
+			color = res.getColor(R.color.black);
+		}
+		mScreen.setBackgroundColor(color);
+	}
+		setBackColor(backgroundflag);
+ */

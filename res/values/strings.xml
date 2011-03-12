@@ -3,5 +3,6 @@
     <string name="app_name">ProtoDec</string>
     
     <string name="mainTitleString">Protocol Decoder v0.1.0</string>
+    <string name="about_body">michael.br.wade@gmail.com</string>
     
 </resources>
