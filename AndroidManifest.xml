@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="com.protodec_beta"
-      android:versionCode="1"
-      android:versionName="1.0">
+      package="com.protodecbeta"
+      android:versionCode="1" android:versionName="1.1">
     <uses-sdk android:minSdkVersion="8" />
 
     <application android:icon="@drawable/icon" android:label="@string/app_name">
         <activity android:label="@string/app_name"
-                  android:theme="@android:style/Theme.NoTitleBar" android:name="ProtoDecTabDriver">
+                  android:theme="@android:style/Theme.NoTitleBar" android:name="com.protodec_beta.ProtoDecTabDriver">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="ConverterActivity"></activity>
-        <activity android:name="DecodeActivity"></activity>
-        <activity android:name="EncodeActivity"></activity>
+        <activity android:name="com.protodec_beta.ConverterActivity"></activity>
+        <activity android:name="com.protodec_beta.DecodeActivity"></activity>
+        <activity android:name="com.protodec_beta.EncodeActivity"></activity>
+        <activity android:name="com.protodec_beta.SetPreference"></activity>
 
     </application>
 </manifest>

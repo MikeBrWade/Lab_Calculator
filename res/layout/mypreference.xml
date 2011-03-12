@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+	<CheckBoxPreference android:key="testFlag1"
+		android:title="Test Setting 1" android:defaultValue="true"
+		android:summary="Flip field to 1" />
+	<CheckBoxPreference android:key="testFlag2"
+		android:title="Test Setting 2" android:defaultValue="true"
+		android:summary="Flip field to 2" />
+	<CheckBoxPreference android:key="testFlag3"
+		android:title="Test Setting 3" android:defaultValue="true"
+		android:summary="Flip field to 3" />
+	<CheckBoxPreference android:key="testFlag4"
+		android:title="Test Setting 4" android:defaultValue="true"
+		android:summary="Flip field to 4" />
+	<CheckBoxPreference android:key="testFlag5"
+		android:title="Test Setting 5" android:defaultValue="true"
+		android:summary="Flip field to 5" />
+</PreferenceScreen>

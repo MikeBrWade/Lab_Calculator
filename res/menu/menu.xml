@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/mnuHelp"
+      	  android:icon="@drawable/ic_menu_help"
+      	  android:title="Help" />
+    <item android:id="@+id/mnuSettings"
+      	  android:icon="@drawable/ic_menu_manage"
+    	  android:title="Settings" />
+    <item android:id="@+id/mnuAbout"
+      	  android:icon="@drawable/ic_menu_info_details"
+      	  android:title="About" />
+    <item android:id="@+id/mnuClear"
+      	  android:icon="@drawable/ic_menu_delete"
+      	  android:title="Clear" />
+    <item android:id="@+id/mnuExit"
+    	  android:icon="@drawable/ic_menu_close_clear_cancel"
+          android:title="Exit" />
+</menu>
