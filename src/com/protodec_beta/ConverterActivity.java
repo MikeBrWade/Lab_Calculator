@@ -1,5 +1,6 @@
 package com.protodec_beta;
 
+import java.math.BigInteger;
 import java.text.NumberFormat;
 
 import com.protodec_beta.CustomizeDialog;
@@ -13,6 +14,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Html;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Display;
@@ -33,75 +35,38 @@ import android.widget.Toast;
 import com.protodecbeta.R;
 
 public class ConverterActivity extends Activity implements OnClickListener, OnTouchListener {
-	private TextView lbldecimal;
-	private TextView txtdecimal;
-	private TextView lblhex;
-	private TextView txthex;
-	private TextView lblbinary;
-	private TextView txtbinary;
-	private TextView txtrotate;
-	private TextView txtcomp;
-	private TextView txtprecision;
-	private Button btn0;
-	private Button btn1;
-	private Button btn2;
-	private Button btn3;
-	private Button btn4;
-	private Button btn5;
-	private Button btn6;
-	private Button btn7;
-	private Button btn8;
-	private Button btn9;
-	private Button btnA;
-	private Button btnB;
-	private Button btnC;
-	private Button btnD;
-	private Button btnE;
-	private Button btnF;
-	private Button btnClear;
-	private Button btnPlus;
-	private Button btnMinus;
-	private Button btnTimes;
-	private Button btnDivide;
-	private Button btnShiftL;
-	private Button btnShiftR;
-	private Button btnEquals;
-	private Button btnSign;
-	private Button btnBS;
-	private Button btnAND;
-	private Button btnOR;
-	private Button btnNOT;
-	private Button btnXOR;
-	private RadioButton radio_dec;
-	private RadioButton radio_hex;
-	private RadioButton radio_bin;
-	private long decvalue;
-	private long decsave;
-	private char modeflag;
-	private String decstring;
-	private String hexstring;
-	private String binstring;
-	private int binbitsflag;
-	private boolean calcflag;
-	private boolean logicflag;
-	private boolean zerosflag;
-	private boolean shiftflag;
-	private int secondflag;
-	private int calcstatus;
-	
-	private	boolean testFlag1;
-	private	boolean testFlag2;
-	private	boolean testFlag3;
-	private	boolean testFlag4;
-	private	boolean testFlag5;
+	// Set of the TextView for the labels and the output lines
+	private TextView lbldecimal, lblhex, lblbinary;
+	private TextView txtdecimal, txthex, txtbinary, txtInformational, txtcomp, txtprecision, txtTestParse;
 
+	// Private Button Objects to drive display/UI
+	private Button btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9, btnA, btnB, btnC, btnD, btnE, btnF;
+	private Button btnClear, btnPlus, btnMinus, btnTimes, btnDivide, btnShiftL, btnShiftR, btnEquals;
+	private Button btnSign, btnBS, btnAND, btnOR, btnNOT, btnXOR;
+	
+	// Radio Buttons for switching between entry styles
+	private RadioButton radio_dec, radio_hex, radio_bin;
+	
+	// Control Flags
+	private enum modeTypeEnum {
+		DECIMAL_MODE, HEX_MODE, BINARY_MODE
+	}
+	private modeTypeEnum currentMode;
+	private boolean calcflag, logicflag, zerosflag, shiftflag;
+	private	boolean testFlag1, testFlag2, testFlag3, testFlag4, testFlag5;
+	private int secondflag, calcstatus, binbitsflag;
+	
+	// Member Variables for Calculation and output/input
+	private String decstring, hexstring, binstring;
+	private long decvalue, decsave;
+	BigInteger uint64Instance;
 	private String tempstring;
+	private int tempInt;
 	RelativeLayout mScreen;
-	//TableLayout mScreen;
 
 
 	/** Called when the activity is first created. */
-	@Override
+	// Basic init and object link into UI
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
@@ -117,136 +82,13 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		// Set Click Listeners
 		linkClickAndTouchListenerInterfaces();
 		
+		// Playing around with context menus "long click"
+		registerForContextMenu(btnNOT);
 
-		//registerForContextMenu(btnNOT);
-
-		mScreen = (RelativeLayout) findViewById(R.id.myScreen);
+		mScreen = (RelativeLayout) findViewById(R.id.myScreen); 
 
 	}
-	// A few functions to setup the initial view and objects
-	private void linkTextFieldsIntoControlObjects()
-	{
-		lbldecimal = (TextView)findViewById(R.id.lbldecimal);
-		txtdecimal = (TextView)findViewById(R.id.txtdecimal);
-		lblhex = (TextView)findViewById(R.id.lblhex);
-		txthex = (TextView)findViewById(R.id.txthex);
-		lblbinary = (TextView)findViewById(R.id.lblbinary);
-		txtbinary = (TextView)findViewById(R.id.txtbinary);
-		txtrotate = (TextView)findViewById(R.id.txtrotate);
-		txtcomp = (TextView)findViewById(R.id.txtcomp);
-		txtprecision = (TextView)findViewById(R.id.txtprecision);
-	}
-	private void linkButtonObjects()
-	{
-		btn0 = (Button)findViewById(R.id.btn0);
-		btn1 = (Button)findViewById(R.id.btn1);
-		btn2 = (Button)findViewById(R.id.btn2);
-		btn3 = (Button)findViewById(R.id.btn3);
-		btn4 = (Button)findViewById(R.id.btn4);
-		btn5 = (Button)findViewById(R.id.btn5);
-		btn6 = (Button)findViewById(R.id.btn6);
-		btn7 = (Button)findViewById(R.id.btn7);
-		btn8 = (Button)findViewById(R.id.btn8);
-		btn9 = (Button)findViewById(R.id.btn9);
-		
-		btnA = (Button)findViewById(R.id.btnA);
-		btnB = (Button)findViewById(R.id.btnB);
-		btnC = (Button)findViewById(R.id.btnC);
-		btnD = (Button)findViewById(R.id.btnD);
-		btnE = (Button)findViewById(R.id.btnE);
-		btnF = (Button)findViewById(R.id.btnF);
-		btnBS = (Button)findViewById(R.id.btnBS);
-		btnClear = (Button)findViewById(R.id.btnClear);
-		btnPlus = (Button)findViewById(R.id.btnPlus);
-		btnMinus = (Button)findViewById(R.id.btnMinus);
-		btnTimes = (Button)findViewById(R.id.btnTimes);
-		btnDivide = (Button)findViewById(R.id.btnDivide);
-		btnSign = (Button)findViewById(R.id.btnSign);
-		btnShiftL = (Button)findViewById(R.id.btnShiftL);
-		btnShiftR = (Button)findViewById(R.id.btnShiftR);
-		btnEquals = (Button)findViewById(R.id.btnEquals);
-		btnAND = (Button)findViewById(R.id.btnAND);
-		btnOR = (Button)findViewById(R.id.btnOR);
-		btnNOT = (Button)findViewById(R.id.btnNOT);
-		btnXOR = (Button)findViewById(R.id.btnXOR);
-
-
-		radio_dec = (RadioButton) findViewById(R.id.radio_dec);
-		radio_hex = (RadioButton) findViewById(R.id.radio_hex);
-		radio_bin = (RadioButton) findViewById(R.id.radio_bin);
-	}
-	private void linkClickAndTouchListenerInterfaces()
-	{
-		btn0.setOnClickListener(this);
-		btn0.setOnTouchListener(this);
-		btn1.setOnClickListener(this);
-		btn1.setOnTouchListener(this);
-		btn2.setOnClickListener(this);
-		btn2.setOnTouchListener(this);
-		btn3.setOnClickListener(this);
-		btn3.setOnTouchListener(this);
-		btn4.setOnClickListener(this);
-		btn4.setOnTouchListener(this);
-		btn5.setOnClickListener(this);
-		btn5.setOnTouchListener(this);
-		btn6.setOnClickListener(this);
-		btn6.setOnTouchListener(this);
-		btn7.setOnClickListener(this);
-		btn7.setOnTouchListener(this);
-		btn8.setOnClickListener(this);
-		btn8.setOnTouchListener(this);
-		btn9.setOnClickListener(this);
-		btn9.setOnTouchListener(this);
-		btnA.setOnClickListener(this);
-		btnA.setOnTouchListener(this);
-		btnB.setOnClickListener(this);
-		btnB.setOnTouchListener(this);
-		btnC.setOnClickListener(this);
-		btnC.setOnTouchListener(this);
-		btnD.setOnClickListener(this);
-		btnD.setOnTouchListener(this);
-		btnE.setOnClickListener(this);
-		btnE.setOnTouchListener(this);
-		btnF.setOnClickListener(this);
-		btnF.setOnTouchListener(this);
-		btnBS.setOnClickListener(this);
-		btnBS.setOnTouchListener(this);
-		btnClear.setOnClickListener(this);
-		btnClear.setOnTouchListener(this);
-
-		btnPlus.setOnClickListener(this);
-		btnPlus.setOnTouchListener(this);
-		btnMinus.setOnClickListener(this);
-		btnMinus.setOnTouchListener(this);
-		btnTimes.setOnClickListener(this);
-		btnTimes.setOnTouchListener(this);
-		btnDivide.setOnClickListener(this);
-		btnDivide.setOnTouchListener(this);
-		btnSign.setOnClickListener(this);
-		btnSign.setOnTouchListener(this);
-		btnShiftL.setOnClickListener(this);
-		btnShiftL.setOnTouchListener(this);
-		btnShiftR.setOnClickListener(this);
-		btnShiftR.setOnTouchListener(this);
-		btnEquals.setOnClickListener(this);
-		btnEquals.setOnTouchListener(this);
-
-		btnAND.setOnClickListener(this);
-		btnAND.setOnTouchListener(this);
-		btnOR.setOnClickListener(this);
-		btnOR.setOnTouchListener(this);
-		btnNOT.setOnClickListener(this);
-		btnNOT.setOnTouchListener(this);
-		btnXOR.setOnClickListener(this);
-		btnXOR.setOnTouchListener(this);
-
-		radio_dec.setOnClickListener(radio_listener);
-		radio_dec.setOnTouchListener(this);
-		radio_hex.setOnClickListener(radio_listener);
-		radio_hex.setOnTouchListener(this);
-		radio_bin.setOnClickListener(radio_listener);
-		radio_bin.setOnTouchListener(this);
-	}
+	
 	
 	// Flipping the activate/deactivate of the number pad
 	private void setDecButtons() {
@@ -444,7 +286,8 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 			btnClear.setText("Clear");
 		}
 		else if(v==btnBS) {
-			if(modeflag=='d') {
+			switch(currentMode){
+			case DECIMAL_MODE:
 				c = decstring.charAt(0);
 				if(decstring.length()==1) {
 					decstring = "0";	
@@ -456,8 +299,8 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 					decstring = decstring.substring(0, decstring.length()-1);
 				}
 				decvalue = Long.parseLong(decstring);
-			}
-			else if(modeflag=='h') {
+				break;
+			case HEX_MODE:
 				if(hexstring.length()==1) {
 					hexstring = "0";	
 				}
@@ -465,15 +308,16 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 					hexstring = hexstring.substring(0, hexstring.length()-1);
 				}
 				decvalue = Long.parseLong(hexstring, 16);
-			}
-			else if(modeflag=='b') {
+				break;
+			case BINARY_MODE:
 				if(binstring.length()==1) {
 					binstring = "0";	
 				}
 				else if(binstring.length()>0) {
 					binstring = binstring.substring(0, binstring.length()-1);
 				}
-				decvalue = Long.parseLong(binstring, 2);   			
+				decvalue = Long.parseLong(binstring, 2); 
+				break;
 			}
 			displayValues();
 		}
@@ -791,8 +635,8 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 				clearDisp();
 				calcstatus=0;
 			}
-
-			if(modeflag=='d') {
+			switch(currentMode) {
+			case DECIMAL_MODE:
 				savstring = decstring;
 				decstring = decstring + c;
 				try {
@@ -803,9 +647,7 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 					toast.show();	
 					decstring = savstring;
 				}
-				displayValues();
-			}
-			else if(modeflag=='h') {
+			case HEX_MODE:
 				savstring = hexstring;
 				hexstring = hexstring + c;
 				try {
@@ -816,9 +658,7 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 					toast.show();
 					hexstring = savstring;
 				}
-				displayValues();
-			}
-			else if(modeflag=='b') {
+			case BINARY_MODE:
 				savstring = binstring;
 				binstring = binstring + c;
 				try {  	
@@ -829,26 +669,57 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 					toast.show();
 					binstring = savstring;
 				}
-				displayValues();
 			}
+			displayValues();
 		}
 	}
 	
 	// Used to clear all the fields as well as the labels and reset the buttons
 	private void clearDisp() {
+		// Resetting fields, button objects, and sizes
 		txtdecimal.setText("0");
+		txtdecimal.setTextSize(18);
 		txthex.setText("0");
+		txthex.setTextSize(18);
 		txtbinary.setText("0");
+		txtbinary.setTextSize(18);
 		decvalue = 0;
 		decstring = "0";
 		hexstring = "0";
 		binstring = "0";
-		txtrotate.setVisibility(View.INVISIBLE);
+		txtInformational.setVisibility(View.INVISIBLE);
 		txtcomp.setVisibility(View.INVISIBLE);
 		txtprecision.setVisibility(View.INVISIBLE);
 		Resources res = getResources();
 		int color = res.getColor(R.color.black);
 		txtbinary.setTextColor(color);
+	}
+	private String buildPadded64BitHexString() {
+		String concateLocalString;
+		Integer bitCountofCurrentValue;
+		concateLocalString = "Bits[";
+		
+		// Grab the current value of the UI Input
+		// This will need to be updated system wide but for now I am just trying it with the current 63 bit + 1 signed bit long value
+		// I assumed this 64 bit value could be used unsigned but Java doesn't allow it.
+		uint64Instance = BigInteger.valueOf(decvalue);
+
+		// Grab the bit count and create the Hex Display
+		bitCountofCurrentValue = uint64Instance.bitLength();
+		concateLocalString = concateLocalString.concat(	String.valueOf(bitCountofCurrentValue) + 
+														"] 0x" + 
+														String.format("%016X", uint64Instance).substring(0, 8) + 
+														" 0x" + 
+														String.format("%016X", uint64Instance).substring(8, 16));
+		
+		return concateLocalString;
+	}
+	public static String padRight(String s, int n) {
+	     return String.format("%1$-" + n + "s", s);  
+	}
+
+	public static String padLeft(String s, int n) {
+	    return String.format("%1$#" + n + "s", s);  
 	}
 	
 	//========================================================
@@ -868,11 +739,17 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		s.append(" 4: ");
 		s.append(testFlag4);
 		s.append(" 5: ");
-		s.append(testFlag4);
+		s.append(testFlag5);		
+		txtTestParse.setText(s.toString());		
+		txtTestParse.setVisibility(View.VISIBLE);
 		
-		txtrotate.setText(s.toString());
+		uint64Instance = new BigInteger(Long.toString(decvalue), 10);
+		//my_uint64BigInteger = my_uint64BigInteger.subtract(BigInteger.ONE);
+		//txtInformational.setText("0x" + my_uint64BigInteger.toString(16).toUpperCase().substring(0, 8) + " 0x" + my_uint64BigInteger.toString(16).toUpperCase().substring(8, 16));	
+		txtInformational.setText(buildPadded64BitHexString());
+		txtInformational.setVisibility(View.VISIBLE);
 		
-		txtrotate.setVisibility(View.VISIBLE);
+		
 		
 		//  Display decvalue on the 4 output fields
 		
@@ -1092,14 +969,16 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 
 		if ((parsedNumericString.length()>=22) & (orient==0)) {
 			parsedNumericString = parsedNumericString.substring(parsedNumericString.length()- 22);
-			color = res.getColor(R.color.silver);
-			txtbinary.setTextColor(color);
-			//txtrotate.setVisibility(View.VISIBLE);
+			//color = res.getColor(R.color.silver);
+			//txtbinary.setTextColor(color);
+			txtbinary.setTextSize(10);
+			//txtInformational.setVisibility(View.VISIBLE);
 		}
 		else{
-			color = res.getColor(R.color.black);
-			txtbinary.setTextColor(color);
-			//txtrotate.setVisibility(View.INVISIBLE);
+			//color = res.getColor(R.color.black);
+			//txtbinary.setTextColor(color);
+			txtbinary.setTextSize(18);
+			//txtInformational.setVisibility(View.INVISIBLE);
 		}
 		txtbinary.setText(padString(parsedNumericString,4));
 		txtcomp.setVisibility(View.INVISIBLE);
@@ -1152,15 +1031,15 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 			// Perform action on clicks
 			if(v==radio_dec) {
 				setDecButtons();
-				modeflag = 'd';
+				currentMode = modeTypeEnum.DECIMAL_MODE;
 			}
 			else if(v==radio_hex) {
 				setHexButtons();
-				modeflag = 'h';
+				currentMode = modeTypeEnum.HEX_MODE;
 			}
 			else if(v==radio_bin) {
 				setBinButtons();
-				modeflag = 'b';
+				currentMode = modeTypeEnum.BINARY_MODE;
 			}
 		}
 	};
@@ -1239,15 +1118,15 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 	@Override
 	protected void onPause() {
 		super.onPause();
-		String mode;
+		int mode;
 
 		SharedPreferences preferences = getPreferences(MODE_PRIVATE);
 		SharedPreferences.Editor editor = preferences.edit();
 
-		mode = String.valueOf(modeflag);
+		mode = currentMode.ordinal();
 		editor.putLong("decvalue", decvalue);
 		editor.putLong("decsave", decsave);
-		editor.putString("modeflag", mode);
+		editor.putInt("currentMode", mode);
 		editor.putInt("secondflag", secondflag);
 		editor.putInt("calcstatus", calcstatus);
 		editor.commit();
@@ -1260,11 +1139,25 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		SharedPreferences preferences = getPreferences(MODE_PRIVATE);
 		decvalue = preferences.getLong("decvalue", 0);
 		decsave = preferences.getLong("decsave", 0);
-		tempstring = preferences.getString("modeflag", "d");
+		//tempstring = preferences.getString("currentMode", "d");
+		tempInt = preferences.getInt("currentMode", 0);
 		secondflag = preferences.getInt("secondflag", 0);
 		calcstatus = preferences.getInt("calcstatus", 0);
 
-		modeflag = tempstring.charAt(0);
+		switch(tempInt) {
+		case 0:
+			currentMode = modeTypeEnum.DECIMAL_MODE;
+			break;
+		case 1:
+			currentMode = modeTypeEnum.HEX_MODE;
+			break;
+		case 2:
+			currentMode = modeTypeEnum.BINARY_MODE;
+			break;
+		default:
+			// If the settings are missing or corrupt just default to decimal mode
+			currentMode = modeTypeEnum.DECIMAL_MODE;			
+		}
 
 		SharedPreferences def_prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 		
@@ -1285,20 +1178,21 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		tempst = def_prefs.getString("binbitsflag", "0");
 		binbitsflag = Integer.valueOf(tempst);
 
-		switch(modeflag) {
-		case('d'):
+		switch(currentMode) {
+		case DECIMAL_MODE:
 			radio_dec.setChecked(true);
-		setDecButtons();
-		break;
-		case('h'):
+			setDecButtons();
+			break;
+		case HEX_MODE:
 			radio_hex.setChecked(true);
-		setHexButtons();
-		break;
-		case('b'):  
+			setHexButtons();
+			break;
+		case BINARY_MODE:
 			radio_bin.setChecked(true);
-		setBinButtons();
-		break;
+			setBinButtons();
+			break;
 		default:    
+			// In any other case just set to decimal as default
 			radio_dec.setChecked(true);
 			setDecButtons();
 			break;
@@ -1308,7 +1202,142 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		setCalcKeys();
 		setLogicKeys();
 	}
+	// ================ UTILITY FUNCTIONS  ====================
+	//   --------  INIT -------- 
+	// A few functions to setup the initial view and objects
+	private void linkTextFieldsIntoControlObjects()
+	{
+		// Decimal Label and Output
+		lbldecimal = (TextView)findViewById(R.id.lbldecimal);
+		txtdecimal = (TextView)findViewById(R.id.txtdecimal);
+		// Hex Label and Output
+		lblhex = (TextView)findViewById(R.id.lblhex);
+		txthex = (TextView)findViewById(R.id.txthex);
+		// Binary Label and Output
+		lblbinary = (TextView)findViewById(R.id.lblbinary);
+		txtbinary = (TextView)findViewById(R.id.txtbinary);
+		// Other text fields for output
+		txtInformational = (TextView)findViewById(R.id.txtrotate);
+		txtcomp = (TextView)findViewById(R.id.txtcomp);
+		txtprecision = (TextView)findViewById(R.id.txtprecision);
+		txtTestParse = (TextView)findViewById(R.id.txtTestParse);
+		
+		// Create uint
+		//uint64Instance = new BigInteger(Long.toString(decvalue), 10);
+	}
+	private void linkButtonObjects()
+	{
+		// Linking all Button objects into their UI counterpart
+		btn0 = (Button)findViewById(R.id.btn0);
+		btn1 = (Button)findViewById(R.id.btn1);
+		btn2 = (Button)findViewById(R.id.btn2);
+		btn3 = (Button)findViewById(R.id.btn3);
+		btn4 = (Button)findViewById(R.id.btn4);
+		btn5 = (Button)findViewById(R.id.btn5);
+		btn6 = (Button)findViewById(R.id.btn6);
+		btn7 = (Button)findViewById(R.id.btn7);
+		btn8 = (Button)findViewById(R.id.btn8);
+		btn9 = (Button)findViewById(R.id.btn9);		
+		btnA = (Button)findViewById(R.id.btnA);
+		btnB = (Button)findViewById(R.id.btnB);
+		btnC = (Button)findViewById(R.id.btnC);
+		btnD = (Button)findViewById(R.id.btnD);
+		btnE = (Button)findViewById(R.id.btnE);
+		btnF = (Button)findViewById(R.id.btnF);
+		btnBS = (Button)findViewById(R.id.btnBS);
+		btnClear = (Button)findViewById(R.id.btnClear);
+		btnPlus = (Button)findViewById(R.id.btnPlus);
+		btnMinus = (Button)findViewById(R.id.btnMinus);
+		btnTimes = (Button)findViewById(R.id.btnTimes);
+		btnDivide = (Button)findViewById(R.id.btnDivide);
+		btnSign = (Button)findViewById(R.id.btnSign);
+		btnShiftL = (Button)findViewById(R.id.btnShiftL);
+		btnShiftR = (Button)findViewById(R.id.btnShiftR);
+		btnEquals = (Button)findViewById(R.id.btnEquals);
+		btnAND = (Button)findViewById(R.id.btnAND);
+		btnOR = (Button)findViewById(R.id.btnOR);
+		btnNOT = (Button)findViewById(R.id.btnNOT);
+		btnXOR = (Button)findViewById(R.id.btnXOR);
+		radio_dec = (RadioButton) findViewById(R.id.radio_dec);
+		radio_hex = (RadioButton) findViewById(R.id.radio_hex);
+		radio_bin = (RadioButton) findViewById(R.id.radio_bin);
+	}
+	private void linkClickAndTouchListenerInterfaces()
+	{
+		btn0.setOnClickListener(this);
+		btn0.setOnTouchListener(this);
+		btn1.setOnClickListener(this);
+		btn1.setOnTouchListener(this);
+		btn2.setOnClickListener(this);
+		btn2.setOnTouchListener(this);
+		btn3.setOnClickListener(this);
+		btn3.setOnTouchListener(this);
+		btn4.setOnClickListener(this);
+		btn4.setOnTouchListener(this);
+		btn5.setOnClickListener(this);
+		btn5.setOnTouchListener(this);
+		btn6.setOnClickListener(this);
+		btn6.setOnTouchListener(this);
+		btn7.setOnClickListener(this);
+		btn7.setOnTouchListener(this);
+		btn8.setOnClickListener(this);
+		btn8.setOnTouchListener(this);
+		btn9.setOnClickListener(this);
+		btn9.setOnTouchListener(this);
+		btnA.setOnClickListener(this);
+		btnA.setOnTouchListener(this);
+		btnB.setOnClickListener(this);
+		btnB.setOnTouchListener(this);
+		btnC.setOnClickListener(this);
+		btnC.setOnTouchListener(this);
+		btnD.setOnClickListener(this);
+		btnD.setOnTouchListener(this);
+		btnE.setOnClickListener(this);
+		btnE.setOnTouchListener(this);
+		btnF.setOnClickListener(this);
+		btnF.setOnTouchListener(this);
+		btnBS.setOnClickListener(this);
+		btnBS.setOnTouchListener(this);
+		btnClear.setOnClickListener(this);
+		btnClear.setOnTouchListener(this);
+
+		btnPlus.setOnClickListener(this);
+		btnPlus.setOnTouchListener(this);
+		btnMinus.setOnClickListener(this);
+		btnMinus.setOnTouchListener(this);
+		btnTimes.setOnClickListener(this);
+		btnTimes.setOnTouchListener(this);
+		btnDivide.setOnClickListener(this);
+		btnDivide.setOnTouchListener(this);
+		btnSign.setOnClickListener(this);
+		btnSign.setOnTouchListener(this);
+		btnShiftL.setOnClickListener(this);
+		btnShiftL.setOnTouchListener(this);
+		btnShiftR.setOnClickListener(this);
+		btnShiftR.setOnTouchListener(this);
+		btnEquals.setOnClickListener(this);
+		btnEquals.setOnTouchListener(this);
+
+		btnAND.setOnClickListener(this);
+		btnAND.setOnTouchListener(this);
+		btnOR.setOnClickListener(this);
+		btnOR.setOnTouchListener(this);
+		btnNOT.setOnClickListener(this);
+		btnNOT.setOnTouchListener(this);
+		btnXOR.setOnClickListener(this);
+		btnXOR.setOnTouchListener(this);
+
+		radio_dec.setOnClickListener(radio_listener);
+		radio_dec.setOnTouchListener(this);
+		radio_hex.setOnClickListener(radio_listener);
+		radio_hex.setOnTouchListener(this);
+		radio_bin.setOnClickListener(radio_listener);
+		radio_bin.setOnTouchListener(this);
+	}
 }
+
+
+
 /* Saved Code Section
 //myVib = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
  * 	private Vibrator myVib;
