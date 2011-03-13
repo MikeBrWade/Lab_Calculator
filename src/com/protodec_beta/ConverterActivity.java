@@ -672,251 +672,62 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 	//  Drives the various UI elements need to display output to the user
 	private void displayValues() {
 		String parsedNumericString;
-		int color;
 		int kp, k;
-
-		// just playing with settings value retrieval
-		String configStatus =  String.format("1: %b, 2: %b, 3: %b, 4: %b, 5: %b", testFlag1, testFlag2, testFlag3, testFlag4, testFlag5);
-		txtTestParse.setText(configStatus);
-		txtTestParse.setVisibility(View.VISIBLE);
-		
-		//uint64Instance = new BigInteger(Long.toString(decvalue), 10);
-		txtInformational.setText(buildPadded64BitHexString());
-		txtInformational.setVisibility(View.VISIBLE);
-		
-		
-		
-		//  Display decvalue on the 4 output fields		
-		decstring = Long.toString(decvalue);
-		hexstring = Long.toHexString(decvalue);
-		binstring = Long.toBinaryString(decvalue);
-
-		//  Decimal	
-		parsedNumericString = NumberFormat.getInstance().format(decvalue);
-		txtdecimal.setText(parsedNumericString);
-
-		//  Hex	
-		parsedNumericString = Long.toHexString(decvalue);
-		parsedNumericString = parsedNumericString.toUpperCase();
-
-		/*
-		if (decvalue<128 && decvalue>=-128) {
-			if (parsedNumericString.length()>2) {
-				parsedNumericString = parsedNumericString.substring(parsedNumericString.length()-2);
-			}
-		}
-		else if (decvalue<32768 && decvalue>=-32768) {
-			if (parsedNumericString.length()>4) {
-				parsedNumericString = parsedNumericString.substring(parsedNumericString.length()-4);
-			}
-		}
-		else if (decvalue/2 < 1073741824 && decvalue/2 >=-1073741824) {
-			if (parsedNumericString.length()>8) {
-				parsedNumericString = parsedNumericString.substring(parsedNumericString.length()-8);
-			}
-		}*/
-
-		txthex.setText(padString(parsedNumericString,2));
-
 		Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
 		int orient = display.getOrientation();
 		Resources res = getResources();
 
-		//  Binary    
+		// Dumping config settings for debug purposes
+		String configStatus =  String.format("1: %b, 2: %b, 3: %b, 4: %b, 5: %b", testFlag1, testFlag2, testFlag3, testFlag4, testFlag5);
+		txtTestParse.setText(configStatus);
+		txtTestParse.setVisibility(View.VISIBLE);
+		
+		// Dumping a 64bit HEX padded representation of the current value to a textview for debug purposes
+		txtInformational.setText(buildPadded64BitHexString());
+		txtInformational.setVisibility(View.VISIBLE);
+		
+		// =====================  OUTPUTTING FIELDS ====================
+		//  ------------- DEC -----------------
+		//  Display decvalue on the 4 output fields		
+		decstring = Long.toString(decvalue);
+		parsedNumericString = NumberFormat.getInstance().format(decvalue);
+		txtdecimal.setText(parsedNumericString);
+
+		
+		//  ------------- HEX -----------------
+		hexstring = Long.toHexString(decvalue);
+		parsedNumericString = Long.toHexString(decvalue);
+		parsedNumericString = parsedNumericString.toUpperCase();
+		
+		// This pads the HEX at the word boundary
+		txthex.setText(padString(parsedNumericString,8));
+
+		//  ------------- BIN -----------------
+		binstring = Long.toBinaryString(decvalue);
 		parsedNumericString = Long.toBinaryString(decvalue);
-		if (binbitsflag==0) {
-			if (decvalue<16 && decvalue>=0) {
-				if (decvalue != 0 && zerosflag==true) {
-					txtprecision.setText("(4-bit)");
-					txtprecision.setVisibility(View.VISIBLE);
-					kp = 4 - parsedNumericString.length();
-					for (k=1; k<=kp ; ++k) {
-						parsedNumericString = "0" + parsedNumericString;
-					}
-				}
-				else {
-					txtprecision.setVisibility(View.INVISIBLE);
-				}
-			}
-			else if (decvalue<256 && decvalue>=-128) {
-				if (parsedNumericString.length()>8) {
-					parsedNumericString = parsedNumericString.substring(parsedNumericString.length()-8);
-					txtprecision.setText("(8-bit)");
-					txtprecision.setVisibility(View.VISIBLE);
-				}
-				else {
-					if (decvalue != 0 && zerosflag==true) {
-						txtprecision.setText("(8-bit)");
-						txtprecision.setVisibility(View.VISIBLE);
-						kp = 8 - parsedNumericString.length();
-						for (k=1; k<=kp ; ++k) {
-							parsedNumericString = "0" + parsedNumericString;
-						}
-					}
-					else {
-						txtprecision.setVisibility(View.INVISIBLE);
-					}
-				}
-			}
-			else if (decvalue<65536 && decvalue>=-32768) {
-				if (parsedNumericString.length()>16) {
-					parsedNumericString = parsedNumericString.substring(parsedNumericString.length()-16);
-					txtprecision.setText("(16-bit)");
-					txtprecision.setVisibility(View.VISIBLE);
-				}
-				else {
-					if (zerosflag==true) {
-						txtprecision.setText("(16-bit)");
-						txtprecision.setVisibility(View.VISIBLE);
-						kp = 16 - parsedNumericString.length();
-						for (k=1; k<=kp ; ++k) {
-							parsedNumericString = "0" + parsedNumericString;
-						}
-					}
-					else {
-						txtprecision.setVisibility(View.INVISIBLE);
-					}
-				}
-			}
-			else if (decvalue/4 < 1073741824 && decvalue/2 >=-1073741824) {
-				if (parsedNumericString.length()>32) {
-					parsedNumericString = parsedNumericString.substring(parsedNumericString.length()-32);
-					txtprecision.setText("(32-bit)");
-					txtprecision.setVisibility(View.VISIBLE);
-				}
-				else {
-					if (zerosflag==true) {
-						txtprecision.setText("(32-bit)");
-						txtprecision.setVisibility(View.VISIBLE);
-						kp = 32 - parsedNumericString.length();
-						for (k=1; k<=kp ; ++k) {
-							parsedNumericString = "0" + parsedNumericString;
-						}
-					}
-					else {
-						txtprecision.setVisibility(View.INVISIBLE);
-					}
-				}
-			}
-			else {
-				txtprecision.setVisibility(View.INVISIBLE);
-			}
-		}
-		//	This is user set bits, not auto
-		else {
-			if (binbitsflag==4) {
-				if (decvalue<16 && decvalue>=0) {
-					if (decvalue != 0) {
-						txtprecision.setText("(4-bit)");
-						txtprecision.setVisibility(View.VISIBLE);
-						kp = 4 - parsedNumericString.length();
-						for (k=1; k<=kp ; ++k) {
-							parsedNumericString = "0" + parsedNumericString;
-						}
-					}
-					else {
-						txtprecision.setVisibility(View.INVISIBLE);
-					}
-				}
-				else {
-					txtprecision.setVisibility(View.INVISIBLE);
-				}
-			}
+		// This pads the BIN at the byte boundary
+		txtbinary.setText(padString(parsedNumericString,8));
 
-			else if (binbitsflag==8) {
-				if (decvalue<256 && decvalue>=-128) {
-					if (parsedNumericString.length()>8) {
-						parsedNumericString = parsedNumericString.substring(parsedNumericString.length()-8);
-						txtprecision.setText("(8-bit)");
-						txtprecision.setVisibility(View.VISIBLE);
-					}
-					else {
-						if (decvalue != 0) {
-							txtprecision.setText("(8-bit)");
-							txtprecision.setVisibility(View.VISIBLE);
-							kp = 8 - parsedNumericString.length();
-							for (k=1; k<=kp ; ++k) {
-								parsedNumericString = "0" + parsedNumericString;
-							}
-						}
-						else {
-							txtprecision.setVisibility(View.INVISIBLE);
-						}
-					}
-				}
-				else {
-					txtprecision.setVisibility(View.INVISIBLE);
-				}
-			}
-
-			else if (binbitsflag==16) {
-				if (decvalue<65536 && decvalue>=-32768) {
-					if (parsedNumericString.length()>16) {
-						parsedNumericString = parsedNumericString.substring(parsedNumericString.length()-16);
-						txtprecision.setText("(16-bit)");
-						txtprecision.setVisibility(View.VISIBLE);
-					}
-					else {
-						if (decvalue != 0) {
-							txtprecision.setText("(16-bit)");
-							txtprecision.setVisibility(View.VISIBLE);
-							kp = 16 - parsedNumericString.length();
-							for (k=1; k<=kp ; ++k) {
-								parsedNumericString = "0" + parsedNumericString;
-							}
-						}
-						else {
-							txtprecision.setVisibility(View.INVISIBLE);
-						}
-					}
-				}
-				else {
-					txtprecision.setVisibility(View.INVISIBLE);
-				}
-			}
-
-			else if (binbitsflag==32) {
-				if (decvalue/4 < 1073741824 && decvalue/2 >=-1073741824) {
-					if (parsedNumericString.length()>32) {
-						parsedNumericString = parsedNumericString.substring(parsedNumericString.length()-32);
-						txtprecision.setText("(32-bit)");
-						txtprecision.setVisibility(View.VISIBLE);
-					}
-					else {
-						if (decvalue != 0) {
-							txtprecision.setText("(32-bit)");
-							txtprecision.setVisibility(View.VISIBLE);
-							kp = 32 - parsedNumericString.length();
-							for (k=1; k<=kp ; ++k) {
-								parsedNumericString = "0" + parsedNumericString;
-							}
-						}
-						else {
-							txtprecision.setVisibility(View.INVISIBLE);
-						}
-					}
-				}
-				else {
-					txtprecision.setVisibility(View.INVISIBLE);
-				}
-			}
-		}
-
+		// Now that we have the strings lets scale the fields based on the size and the orientation
+		//  ------------- DEC -----------------
+		//  might not be needed
+		//  ------------- HEX -----------------
+		//  might not be needed
+		//  ------------- BIN -----------------
 		if ((parsedNumericString.length()>=22) & (orient==0)) {
 			parsedNumericString = parsedNumericString.substring(parsedNumericString.length()- 22);
-			//color = res.getColor(R.color.silver);
-			//txtbinary.setTextColor(color);
 			txtbinary.setTextSize(10);
+			//color = res.getColor(R.color.black);
+			//txtbinary.setTextColor(color);
 			//txtInformational.setVisibility(View.VISIBLE);
 		}
 		else{
+			txtbinary.setTextSize(18);
 			//color = res.getColor(R.color.black);
 			//txtbinary.setTextColor(color);
-			txtbinary.setTextSize(18);
 			//txtInformational.setVisibility(View.INVISIBLE);
 		}
-		txtbinary.setText(padString(parsedNumericString,4));
-		txtcomp.setVisibility(View.INVISIBLE);
+	
 	}
 	// Used to clear all the fields as well as the labels and reset the buttons
 	private void clearDisp() {
@@ -927,9 +738,10 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		txthex.setTextSize(18);
 		txtbinary.setText("0");
 		txtbinary.setTextSize(18);
-		uint64Instance = BigInteger.ZERO;
 		
+		uint64Instance = BigInteger.ZERO;
 		decvalue = 0;
+		
 		decstring = "0";
 		hexstring = "0";
 		binstring = "0";
@@ -968,6 +780,9 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 	}
 	private String padString(String paddedString, int i) {
 		// Pads the string with spaces at the interval i
+		//  TODO this is a bit hacky I need to look into the string utilities
+		//    I am sure there is something that lets me do this easier and more
+		//    efficiently
 		Integer tmpInteger;
 		String scratchPad;
 		char c;
@@ -1113,10 +928,7 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		return true;
 	}
 	// ================================================================
-	
-	
-	
-	
+		
 	// ==================== PAUSE/RESUME STATE ==========================
 	protected void onPause() 
 	{
@@ -1347,44 +1159,3 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 	}
 	
 }
-
-
-
-/* Saved Code Section
-//myVib = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
- * 	private Vibrator myVib;
-	private boolean vibflag;
-	vibflag = def_prefs.getBoolean("vibflag", true);
-		//=============================================================    
-	//Background color settings, 1 through 4    
-	private void setBackColor(int bckflag) {
-		int color;
-		Resources res = getResources();
-		if(bckflag==1) {
-			color = res.getColor(R.color.black);
-		}
-		else if(bckflag==2) {
-			color = res.getColor(R.color.gold);
-		}
-		else if(bckflag==3) {
-			color = res.getColor(R.color.steelblue);
-		}
-		else if(bckflag==4) {
-			color = res.getColor(R.color.teal);
-		}
-		else if(bckflag==5) {
-			color = res.getColor(R.color.red);
-		}
-		else if(bckflag==6) {
-			color = res.getColor(R.color.purple);
-		}
-		else if(bckflag==7) {
-			color = res.getColor(R.color.brown);
-		}
-		else {
-			color = res.getColor(R.color.black);
-		}
-		mScreen.setBackgroundColor(color);
-	}
-		setBackColor(backgroundflag);
- */
