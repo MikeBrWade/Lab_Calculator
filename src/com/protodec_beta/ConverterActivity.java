@@ -14,7 +14,6 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Html;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Display;
@@ -23,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.Surface;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
@@ -52,7 +52,7 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		DECIMAL_MODE, HEX_MODE, BINARY_MODE
 	}
 	private modeTypeEnum currentMode;
-	private boolean calcflag, logicflag, zerosflag, shiftflag;
+	private boolean calculationOperationInProgress, logicflag, zerosflag, shiftflag;
 	private	boolean testFlag1, testFlag2, testFlag3, testFlag4, testFlag5;
 	private int secondflag, calcstatus, binbitsflag;
 	
@@ -89,8 +89,119 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 
 	}
 	
+	//  =======================  NUMBERPAD =======================   
+	//  Set of functions to manage the number pad, both the input and operation buttons
+	private void setCalcKeys() {
+		// Grabbing the current display instance and the orientation flag
+		Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
+		int orient = display.getOrientation();
+		
+		// Depending on the orientation and the presence of a current calculation, hide/show the input elements
+		// TODO I need a more elegant way of doing calculations, tracking them with a variable is kinda cruddy
+		
+		if(((orient==Surface.ROTATION_0)||(orient==Surface.ROTATION_180))) 
+		{
+			// If the phone is in landscape (either normal or upside down, enable the keys, 
+			showAllInputButtons();
+			
+			// TODO not completed yet, add 64bit extended display fields
+			hideExtended64BitDisplay();
+		}
+		else {
+			// otherwise enable the extended 64 bit display and disable the keys)
+			hideAllInputButtons();
+			
+			// TODO not completed yet, add 64bit extended display fields
+			showExtended64BitDisplay();
+		}
+	}
+	private void setLogicKeys() {
+		// Grabbing the current display instance and the orientation flag
+		Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
+		int orient = display.getOrientation();
+		
+		if(((orient==Surface.ROTATION_0)||(orient==Surface.ROTATION_180))) 
+		{
+			// If the phone is in landscape (either normal or upside down, enable the keys, 
+			showAllOperationButtons();
+		}
+		else {
+			// otherwise enable the extended 64 bit display and disable the keys)
+			hideAllOperationButtons();
+		}
+	}	
 	
-	// Flipping the activate/deactivate of the number pad
+	// Utility Function used to hide/show various fields and buttons in the UI
+	private void showAllOperationButtons() {
+		btnPlus.setVisibility(View.VISIBLE);
+		btnMinus.setVisibility(View.VISIBLE);
+		btnTimes.setVisibility(View.VISIBLE);
+		btnDivide.setVisibility(View.VISIBLE);
+		btnEquals.setVisibility(View.VISIBLE);
+		btnNOT.setVisibility(View.VISIBLE);
+		btnAND.setVisibility(View.VISIBLE);
+		btnSign.setVisibility(View.VISIBLE);
+		btnBS.setVisibility(View.VISIBLE);
+		btnClear.setVisibility(View.VISIBLE);
+		btnShiftL.setVisibility(View.VISIBLE);
+		btnShiftR.setVisibility(View.VISIBLE);
+	}
+	private void hideAllOperationButtons() {
+		btnPlus.setVisibility(View.INVISIBLE);
+		btnMinus.setVisibility(View.INVISIBLE);
+		btnTimes.setVisibility(View.INVISIBLE);
+		btnDivide.setVisibility(View.INVISIBLE);
+		btnEquals.setVisibility(View.INVISIBLE);
+		btnNOT.setVisibility(View.INVISIBLE);
+		btnAND.setVisibility(View.INVISIBLE);
+		btnSign.setVisibility(View.INVISIBLE);
+		btnBS.setVisibility(View.INVISIBLE);
+		btnClear.setVisibility(View.INVISIBLE);
+		btnShiftL.setVisibility(View.INVISIBLE);
+		btnShiftR.setVisibility(View.INVISIBLE);		
+	}
+	private void showAllInputButtons() {
+		btn0.setVisibility(View.VISIBLE);
+		btn1.setVisibility(View.VISIBLE);
+		btn2.setVisibility(View.VISIBLE);
+		btn3.setVisibility(View.VISIBLE);
+		btn4.setVisibility(View.VISIBLE);
+		btn5.setVisibility(View.VISIBLE);
+		btn6.setVisibility(View.VISIBLE);
+		btn7.setVisibility(View.VISIBLE);
+		btn8.setVisibility(View.VISIBLE);
+		btn9.setVisibility(View.VISIBLE);		
+		btnA.setVisibility(View.VISIBLE);
+		btnB.setVisibility(View.VISIBLE);
+		btnC.setVisibility(View.VISIBLE);
+		btnD.setVisibility(View.VISIBLE);
+		btnE.setVisibility(View.VISIBLE);
+		btnF.setVisibility(View.VISIBLE);
+	}
+	private void hideAllInputButtons() {
+		btn0.setVisibility(View.INVISIBLE);
+		btn1.setVisibility(View.INVISIBLE);
+		btn2.setVisibility(View.INVISIBLE);
+		btn3.setVisibility(View.INVISIBLE);
+		btn4.setVisibility(View.INVISIBLE);
+		btn5.setVisibility(View.INVISIBLE);
+		btn6.setVisibility(View.INVISIBLE);
+		btn7.setVisibility(View.INVISIBLE);
+		btn8.setVisibility(View.INVISIBLE);
+		btn9.setVisibility(View.INVISIBLE);		
+		btnA.setVisibility(View.INVISIBLE);
+		btnB.setVisibility(View.INVISIBLE);
+		btnC.setVisibility(View.INVISIBLE);
+		btnD.setVisibility(View.INVISIBLE);
+		btnE.setVisibility(View.INVISIBLE);
+		btnF.setVisibility(View.INVISIBLE);		
+	}
+	private void showExtended64BitDisplay() {
+		// TODO Add extended Display code
+	}
+	private void hideExtended64BitDisplay() {
+		// TODO Add extended Display code
+	}
 	private void setDecButtons() {
 		btn0.setEnabled(true);
 		btn1.setEnabled(true);
@@ -145,125 +256,14 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		btnE.setEnabled(false);
 		btnF.setEnabled(false);
 	}
-	
-	private void setCalcKeys() {
-		// Grabbing the current display instance and the orientation flag
-		Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
-		int orient = display.getOrientation();
 		
-		// Depending on the orientation and the presence of a current calculation, hide/show the input elements
-		if((calcflag==true) & (orient==0)) 
-		{
-			if (secondflag==0) {
-				btnPlus.setVisibility(View.VISIBLE);
-				btnMinus.setVisibility(View.VISIBLE);
-				btnTimes.setVisibility(View.VISIBLE);
-				btnDivide.setVisibility(View.VISIBLE);
-				btnEquals.setVisibility(View.VISIBLE);
-				btnPlus.setEnabled(true);
-				btnMinus.setEnabled(true);
-				btnTimes.setEnabled(true);
-				btnDivide.setEnabled(true);
-				btnEquals.setEnabled(false);
-			}
-			else if(secondflag==1) {
-				btnPlus.setVisibility(View.VISIBLE);
-				btnMinus.setVisibility(View.INVISIBLE);
-				btnTimes.setVisibility(View.INVISIBLE);
-				btnDivide.setVisibility(View.INVISIBLE);
-				btnEquals.setVisibility(View.VISIBLE);
-				btnEquals.setEnabled(true);
-				btnPlus.setEnabled(false);
-			}
-			else if(secondflag==2) {
-				btnPlus.setVisibility(View.INVISIBLE);
-				btnMinus.setVisibility(View.VISIBLE);
-				btnTimes.setVisibility(View.INVISIBLE);
-				btnDivide.setVisibility(View.INVISIBLE);
-				btnEquals.setVisibility(View.VISIBLE);
-				btnEquals.setEnabled(true);
-				btnMinus.setEnabled(false);
-			}
-			else if(secondflag==3) {
-				btnPlus.setVisibility(View.INVISIBLE);
-				btnMinus.setVisibility(View.INVISIBLE);
-				btnTimes.setVisibility(View.VISIBLE);
-				btnDivide.setVisibility(View.INVISIBLE);
-				btnEquals.setVisibility(View.VISIBLE);
-				btnEquals.setEnabled(true);
-				btnTimes.setEnabled(false);
-			}
-			else if(secondflag==4) {
-				btnPlus.setVisibility(View.INVISIBLE);
-				btnMinus.setVisibility(View.INVISIBLE);
-				btnTimes.setVisibility(View.INVISIBLE);
-				btnDivide.setVisibility(View.VISIBLE);
-				btnEquals.setVisibility(View.VISIBLE);
-				btnEquals.setEnabled(true);
-				btnDivide.setEnabled(false);
-			}
-		}
-		else {
-			btnPlus.setVisibility(View.INVISIBLE);
-			btnMinus.setVisibility(View.INVISIBLE);
-			btnTimes.setVisibility(View.INVISIBLE);
-			btnDivide.setVisibility(View.INVISIBLE);
-			if((logicflag==false) | (orient!=0)) {
-				btnEquals.setVisibility(View.INVISIBLE);
-			}
-		}
-	}
+	//  ============================================================ 
 	
-	private void setLogicKeys() {
-		// Grabbing the current display instance and the orientation flag
-		Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
-		int orient = display.getOrientation();
-		//Depending on the orientation and the presence of a current logic operation, hide/show the input elements
-		if((logicflag==true) & (orient==0)) {
-			btnAND.setVisibility(View.VISIBLE);
-			btnOR.setVisibility(View.VISIBLE);
-			btnNOT.setVisibility(View.VISIBLE);
-			btnXOR.setVisibility(View.VISIBLE);
-			btnShiftL.setVisibility(View.VISIBLE);
-			btnShiftR.setVisibility(View.VISIBLE);
-			btnEquals.setVisibility(View.VISIBLE);
-			btnAND.setEnabled(true);
-			btnOR.setEnabled(true);
-			btnNOT.setEnabled(true);
-			btnXOR.setEnabled(true);
-			btnShiftL.setEnabled(true);
-			btnShiftR.setEnabled(true);
-			btnEquals.setEnabled(false);
-		}
-		else {
-			btnAND.setVisibility(View.INVISIBLE);
-			btnOR.setVisibility(View.INVISIBLE);
-			btnNOT.setVisibility(View.INVISIBLE);
-			btnXOR.setVisibility(View.INVISIBLE);
-			btnShiftL.setVisibility(View.INVISIBLE);
-			btnShiftR.setVisibility(View.INVISIBLE);
-			if ((calcflag==false) | (orient!=0)) {
-				btnEquals.setVisibility(View.INVISIBLE);
-			}
-			if (orient!=0) {
-				btnNOT.setVisibility(View.VISIBLE);
-			}
-		}
-	}
 	
-	//This is used to capture the menu action and create a menu instance
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.menu, menu);
-		return true;
-	}
 	
-	// capture onTouch to play around with the events etc
-	public boolean onTouch(View v, MotionEvent event) {
-		return false;
-	}
-	
-	//======================================================= 
+
+	//  =================== UI Driver and Update Methods =======================
+	// ----------------- Display Input Drivers  --------------------
 	//Captures all clicks from various buttons and dispatches their commands
 	public void onClick(View v) {   
 		char c;
@@ -271,19 +271,13 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		long decnew;
 		long decprod;
 
-		if(v==btnClear) {
-			if (secondflag>0) {
-				decvalue = decsave;
-				displayValues();
-			}
-			else {
-				clearDisp();
-			}
-			secondflag=0;
-			calcstatus=0;
+		if(v==btnClear) 
+		{
+			// User pressed clear button
+			// Clear current values and the UI
+			clearDisp();
 			setCalcKeys();
 			setLogicKeys();
-			btnClear.setText("Clear");
 		}
 		else if(v==btnBS) {
 			switch(currentMode){
@@ -674,85 +668,25 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		}
 	}
 	
-	// Used to clear all the fields as well as the labels and reset the buttons
-	private void clearDisp() {
-		// Resetting fields, button objects, and sizes
-		txtdecimal.setText("0");
-		txtdecimal.setTextSize(18);
-		txthex.setText("0");
-		txthex.setTextSize(18);
-		txtbinary.setText("0");
-		txtbinary.setTextSize(18);
-		decvalue = 0;
-		decstring = "0";
-		hexstring = "0";
-		binstring = "0";
-		txtInformational.setVisibility(View.INVISIBLE);
-		txtcomp.setVisibility(View.INVISIBLE);
-		txtprecision.setVisibility(View.INVISIBLE);
-		Resources res = getResources();
-		int color = res.getColor(R.color.black);
-		txtbinary.setTextColor(color);
-	}
-	private String buildPadded64BitHexString() {
-		String concateLocalString;
-		Integer bitCountofCurrentValue;
-		concateLocalString = "Bits[";
-		
-		// Grab the current value of the UI Input
-		// This will need to be updated system wide but for now I am just trying it with the current 63 bit + 1 signed bit long value
-		// I assumed this 64 bit value could be used unsigned but Java doesn't allow it.
-		uint64Instance = BigInteger.valueOf(decvalue);
-
-		// Grab the bit count and create the Hex Display
-		bitCountofCurrentValue = uint64Instance.bitLength();
-		concateLocalString = concateLocalString.concat(	String.valueOf(bitCountofCurrentValue) + 
-														"] 0x" + 
-														String.format("%016X", uint64Instance).substring(0, 8) + 
-														" 0x" + 
-														String.format("%016X", uint64Instance).substring(8, 16));
-		
-		return concateLocalString;
-	}
-	public static String padRight(String s, int n) {
-	     return String.format("%1$-" + n + "s", s);  
-	}
-
-	public static String padLeft(String s, int n) {
-	    return String.format("%1$#" + n + "s", s);  
-	}
-	
-	//========================================================
+	// ----------------- Display Output Drivers  --------------------
+	//  Drives the various UI elements need to display output to the user
 	private void displayValues() {
 		String parsedNumericString;
 		int color;
 		int kp, k;
 
 		// just playing with settings value retrieval
-		StringBuilder s = new StringBuilder(100);
-		s.append("1: ");
-		s.append(testFlag1);
-		s.append(" 2: ");
-		s.append(testFlag2);
-		s.append(" 3: ");
-		s.append(testFlag3);
-		s.append(" 4: ");
-		s.append(testFlag4);
-		s.append(" 5: ");
-		s.append(testFlag5);		
-		txtTestParse.setText(s.toString());		
+		String configStatus =  String.format("1: %b, 2: %b, 3: %b, 4: %b, 5: %b", testFlag1, testFlag2, testFlag3, testFlag4, testFlag5);
+		txtTestParse.setText(configStatus);
 		txtTestParse.setVisibility(View.VISIBLE);
 		
-		uint64Instance = new BigInteger(Long.toString(decvalue), 10);
-		//my_uint64BigInteger = my_uint64BigInteger.subtract(BigInteger.ONE);
-		//txtInformational.setText("0x" + my_uint64BigInteger.toString(16).toUpperCase().substring(0, 8) + " 0x" + my_uint64BigInteger.toString(16).toUpperCase().substring(8, 16));	
+		//uint64Instance = new BigInteger(Long.toString(decvalue), 10);
 		txtInformational.setText(buildPadded64BitHexString());
 		txtInformational.setVisibility(View.VISIBLE);
 		
 		
 		
-		//  Display decvalue on the 4 output fields
-		
+		//  Display decvalue on the 4 output fields		
 		decstring = Long.toString(decvalue);
 		hexstring = Long.toHexString(decvalue);
 		binstring = Long.toBinaryString(decvalue);
@@ -765,6 +699,7 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		parsedNumericString = Long.toHexString(decvalue);
 		parsedNumericString = parsedNumericString.toUpperCase();
 
+		/*
 		if (decvalue<128 && decvalue>=-128) {
 			if (parsedNumericString.length()>2) {
 				parsedNumericString = parsedNumericString.substring(parsedNumericString.length()-2);
@@ -779,9 +714,9 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 			if (parsedNumericString.length()>8) {
 				parsedNumericString = parsedNumericString.substring(parsedNumericString.length()-8);
 			}
-		}
+		}*/
 
-		txthex.setText(padString(parsedNumericString,4));
+		txthex.setText(padString(parsedNumericString,2));
 
 		Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
 		int orient = display.getOrientation();
@@ -983,6 +918,54 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		txtbinary.setText(padString(parsedNumericString,4));
 		txtcomp.setVisibility(View.INVISIBLE);
 	}
+	// Used to clear all the fields as well as the labels and reset the buttons
+	private void clearDisp() {
+		// Resetting fields, button objects, and sizes
+		txtdecimal.setText("0");
+		txtdecimal.setTextSize(18);
+		txthex.setText("0");
+		txthex.setTextSize(18);
+		txtbinary.setText("0");
+		txtbinary.setTextSize(18);
+		uint64Instance = BigInteger.ZERO;
+		
+		decvalue = 0;
+		decstring = "0";
+		hexstring = "0";
+		binstring = "0";
+		
+		txtInformational.setVisibility(View.INVISIBLE);
+		txtcomp.setVisibility(View.INVISIBLE);
+		txtprecision.setVisibility(View.INVISIBLE);
+		
+		// used later when I signal for 64bit binary in landscape
+		/*
+		Resources res = getResources();
+		int color = res.getColor(R.color.black);
+		txtbinary.setTextColor(color);
+		*/
+	}
+	
+	//  ------------ Some Display Utility Functions ------------
+	private String buildPadded64BitHexString() {
+		String concateLocalString;
+		Integer bitCountofCurrentValue;
+		concateLocalString = "Bits[";
+		
+		// Grab the current value of the UI Input
+		// This will need to be updated system wide but for now I am just trying it with the current 63 bit + 1 signed bit long value
+		// I assumed this 64 bit value could be used unsigned but Java doesn't allow it.
+		uint64Instance = BigInteger.valueOf(decvalue);
+
+		// Grab the bit count and create the Hex Display
+		bitCountofCurrentValue = uint64Instance.bitLength();
+		concateLocalString = concateLocalString.concat(	String.valueOf(bitCountofCurrentValue) + 
+														"] 0x" + 
+														String.format("%016X", uint64Instance).substring(0, 8) + 
+														" 0x" + 
+														String.format("%016X", uint64Instance).substring(8, 16));		
+		return concateLocalString;
+	}
 	private String padString(String paddedString, int i) {
 		// Pads the string with spaces at the interval i
 		Integer tmpInteger;
@@ -1002,8 +985,10 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		return paddedString = new StringBuilder(scratchPad).reverse().toString();
 	}
 	private char getButtonValue(View v) {
-		// There has to be a better way, 
-		//    could I pull the value and reinterpret? that would probably be more runtime expensive though
+		// TODO There has to be a better way, could I pull the value and reinterpret? 
+		//    that would probably be more runtime expensive though I can't "switch" on 
+		//    a view value and extracting text from the button elements then massaging
+		//    then into values I can use probably would be worse
 		char c;
 		c = '0';
 		if(v==btn0)      { c = '0'; }
@@ -1024,6 +1009,7 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		else if(v==btnF) { c = 'F';	}
 		return c;
 	}
+	
 	// Handles the click of the radio buttons   
 	private OnClickListener radio_listener = new OnClickListener() {
 		public void onClick(View v) 
@@ -1044,6 +1030,14 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		}
 	};
 	
+	
+	//  ======================== Options Menu ==============================
+	//This is used to capture the menu action and create a menu instance
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.menu, menu);
+		return true;
+	}
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle item selection
 		switch (item.getItemId()){
@@ -1091,32 +1085,41 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 			return super.onOptionsItemSelected(item);
 		}
 	}
-	//Context menu for ones and two complement    
-	@Override
+ 	
+	// ========================== CONTEXT MENU ==========================
+	// Testing out a long click option menu
 	public void onCreateContextMenu(ContextMenu menu, View v,ContextMenuInfo menuInfo) {  
 		super.onCreateContextMenu(menu, v, menuInfo);  
-		menu.setHeaderTitle("Set complement");  
-		menu.add(0, 1, 0, "1s complement (NOT)");  
-		menu.add(0, 2, 0, "2s complement (NOT+1)");  
+		menu.setHeaderTitle("Example Context Menu");  
+		menu.add(0, 1, 0, "Option 1");  
+		menu.add(0, 2, 0, "Option 2");  
 	}
-	@Override
 	public boolean onContextItemSelected(MenuItem item) {  
-		if(item.getItemId()==1){
-			decvalue = ~decvalue;
+		switch(item.getItemId())
+		{
+		case 1:
+			// Do something based on Option 1 selected
 			displayValues();
-		}
-		else if(item.getItemId()==2){
-			decvalue = ~decvalue+1;
+			break;
+		case 2:
+			// Do something based on Option 2 selected
 			displayValues();
-		}
-		else {
+			break;
+		default:
+			// Erroneous selection
 			return false;
-		}  
-		return true;  
+		}
+		// Show user passed option back to activity
+		return true;
 	}
-	//This restores screen status after change of orientation    
-	@Override
-	protected void onPause() {
+	// ================================================================
+	
+	
+	
+	
+	// ==================== PAUSE/RESUME STATE ==========================
+	protected void onPause() 
+	{
 		super.onPause();
 		int mode;
 
@@ -1131,7 +1134,6 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		editor.putInt("calcstatus", calcstatus);
 		editor.commit();
 	}
-	@Override
 	protected void onResume() {
 
 		super.onResume();
@@ -1168,7 +1170,7 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		testFlag5 = def_prefs.getBoolean("testFlag5", true);
 		
 		
-		calcflag = def_prefs.getBoolean("calcflag", true);
+		calculationOperationInProgress = def_prefs.getBoolean("calculationOperationInProgress", true);
 		logicflag = def_prefs.getBoolean("logicflag", true);
 		zerosflag = def_prefs.getBoolean("zerosflag", true);
 		shiftflag = def_prefs.getBoolean("shiftflag", false);
@@ -1202,6 +1204,9 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		setCalcKeys();
 		setLogicKeys();
 	}
+	// ================================================================
+	
+	
 	// ================ UTILITY FUNCTIONS  ====================
 	//   --------  INIT -------- 
 	// A few functions to setup the initial view and objects
@@ -1225,8 +1230,7 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		// Create uint
 		//uint64Instance = new BigInteger(Long.toString(decvalue), 10);
 	}
-	private void linkButtonObjects()
-	{
+	private void linkButtonObjects(){
 		// Linking all Button objects into their UI counterpart
 		btn0 = (Button)findViewById(R.id.btn0);
 		btn1 = (Button)findViewById(R.id.btn1);
@@ -1334,6 +1338,14 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		radio_bin.setOnClickListener(radio_listener);
 		radio_bin.setOnTouchListener(this);
 	}
+	
+
+	
+	// capture onTouch to play around with the events etc
+	public boolean onTouch(View v, MotionEvent event) {
+		return false;
+	}
+	
 }
 
 
