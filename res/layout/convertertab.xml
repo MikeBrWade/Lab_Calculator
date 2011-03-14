@@ -18,11 +18,11 @@
     	<TextView
         	android:id="@+id/txtdecimal"
 	        android:layout_width="fill_parent"
-    	    android:layout_height="wrap_content"
+    	    android:layout_height="35dp"
         	android:background="@android:drawable/editbox_background"
         	android:textColor="@color/black" 
         	android:textSize="18sp"       
-	        android:gravity="right"
+	        android:gravity="center_vertical|right"
 	        android:inputType="text"
     	    android:text=""/>
 	</TableRow>
@@ -38,11 +38,11 @@
     	<TextView
 	        android:id="@+id/txthex"
     	    android:layout_width="fill_parent"
-        	android:layout_height="wrap_content"
+        	android:layout_height="35dp"
 	        android:background="@android:drawable/editbox_background"
         	android:textColor="@color/black"
         	android:textSize="18sp"       
-	        android:gravity="right"
+	        android:gravity="center_vertical|right"
 	        android:inputType="text"
     	    android:text=""/>
 	</TableRow>
@@ -58,11 +58,11 @@
     	<TextView
         	android:id="@+id/txtbinary"
 	        android:layout_width="fill_parent"
-    	    android:layout_height="wrap_content"
+    	    android:layout_height="35dp"
     	    android:background="@android:drawable/editbox_background"
         	android:textColor="@color/black"
         	android:textSize="18sp"       
-        	android:gravity="right"
+        	android:gravity="center_vertical|right"        	
 	        android:inputType="text"
     	    android:text=""/>
 	</TableRow>
@@ -96,7 +96,6 @@
     	    android:textStyle="bold"
     	    android:visibility="invisible"
     	    android:textColor="@color/white"
-    	    android:paddingRight="3dp"
     	    android:layout_below="@+id/table1"
     	    android:layout_alignRight="@+id/table1"
 	        android:text="1s comp"/>
@@ -104,7 +103,6 @@
     <RadioGroup  android:id="@+id/radiogroup1"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:paddingTop="1dp"
       android:layout_centerHorizontal="true"
       android:layout_below="@+id/txtrotate"
       android:orientation="horizontal">
@@ -125,7 +123,6 @@
 	<TableLayout android:id="@+id/table2"
 	    android:layout_width="fill_parent"
     	android:layout_height="wrap_content"
-    	android:paddingTop="1dp"
     	android:stretchColumns="0,1,2,3,4,5" 
     	android:layout_below="@+id/radiogroup1" >
 	<TableRow>
@@ -317,6 +314,15 @@
 	        android:text="=" />
     </TableRow>    	
     </TableLayout>
+    		<TextView
+	        android:id="@+id/txtTestParse"
+	        android:layout_width="fill_parent"
+    	    android:layout_height="wrap_content"
+    	    android:textSize="10dp"
+    	    android:textColor="@color/white"
+    	    android:visibility="invisible"
+    	    android:layout_below="@+id/table2"
+    	    android:layout_gravity="fill_horizontal"/>
 </RelativeLayout>
 
 
