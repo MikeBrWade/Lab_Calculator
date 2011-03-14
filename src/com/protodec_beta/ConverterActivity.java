@@ -10,7 +10,6 @@ import com.protodec_beta.SetPreference;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.Html;
@@ -36,7 +35,7 @@ import com.protodecbeta.R;
 
 public class ConverterActivity extends Activity implements OnClickListener, OnTouchListener {
 	// Set of the TextView for the labels and the output lines
-	private TextView lbldecimal, lblhex, lblbinary;
+	//private TextView lbldecimal, lblhex, lblbinary;
 	private TextView txtdecimal, txthex, txtbinary, txtInformational, txtcomp, txtprecision, txtTestParse;
 
 	// Private Button Objects to drive display/UI
@@ -309,16 +308,19 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 	private void performBtnBackSpaceActions() {
 		switch(currentMode){
 		case DECIMAL_MODE:
-			if(decstring.length()>0) {decstring = decstring.substring(0, decstring.length()-1);}
-			uint64Instance = new BigInteger(decstring); //TODO find something besides "new" to do this
+			if(decstring.length()==1) {decstring = "0";}
+			else if(decstring.length()>0) {decstring = decstring.substring(0, decstring.length()-1);}
+			uint64Instance = new BigInteger(decstring); //TODO find something besides "new" to do this I think Java GC takes care of this though
 			break;
 		case HEX_MODE:
-			if(hexstring.length()>0) {hexstring = hexstring.substring(0, hexstring.length()-1);}
-			uint64Instance = new BigInteger(hexstring, 16); //TODO find something besides "new" to do this
+			if(hexstring.length()==1) {hexstring = "0";}
+			else if(hexstring.length()>0) {hexstring = hexstring.substring(0, hexstring.length()-1);}
+			uint64Instance = new BigInteger(hexstring, 16); //TODO find something besides "new" to do this I think Java GC takes care of this though
 			break;
 		case BINARY_MODE:
-			if(binstring.length()>0) {binstring = binstring.substring(0, binstring.length()-1);}
-			uint64Instance = new BigInteger(binstring, 2); //TODO find something besides "new" to do this
+			if(binstring.length()==1) {binstring = "0";}
+			else if(binstring.length()>0) {binstring = binstring.substring(0, binstring.length()-1);}
+			uint64Instance = new BigInteger(binstring, 2); //TODO find something besides "new" to do this I think Java GC takes care of this though
 			break;
 		}
 	}
@@ -533,7 +535,22 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 	private void performBtnNOTActions() {
 		uint64Instance = uint64Instance.not();
 	}
-	
+	private void performBtnEqualActions() {
+		switch(currentCalculationOperation)
+		{
+		case PLUS_CALC:			calcBtnPlusActions();  		 break;
+		case MINUS_CALC:		calcBtnMinusActions(); 		 break;
+		case MULTIPLY_CALC:		calcBtnTimesActions(); 		 break;
+		case DIVIDE_CALC:		calcBtnDivideActions(); 	 break;
+		case OR_CALC:			calcBtnORActions(); 		 break;
+		case AND_CALC:			calcBtnANDActions(); 		 break;
+		case SHIFT_L_CALC:		calcBtnShiftLActions();		 break;
+		case SHIFT_R_CALC:		calcBtnShiftRActions();	 	 break;	
+		}
+		
+		currentCalculationOperation = calculationTypeEnum.NO_OP_CALC;
+		calculationOperationInProgress = false;
+	}
 	// -------------- Operation Drivers -------------------------
 	private void calcBtnPlusActions() {
 		uint64Instance = uint64Instance_SaveValue.add(uint64Instance);
@@ -565,23 +582,6 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 	private void calcBtnShiftRActions() {
 		uint64Instance = uint64Instance_SaveValue.shiftRight(1);  // TODO add context menu for multiple shifts
 	}
-	// ----------------------------------------------------------
-	private void performBtnEqualActions() {
-		switch(currentCalculationOperation)
-		{
-		case PLUS_CALC:			calcBtnPlusActions();  		 break;
-		case MINUS_CALC:		calcBtnMinusActions(); 		 break;
-		case MULTIPLY_CALC:		calcBtnTimesActions(); 		 break;
-		case DIVIDE_CALC:		calcBtnDivideActions(); 	 break;
-		case OR_CALC:			calcBtnORActions(); 		 break;
-		case AND_CALC:			calcBtnANDActions(); 		 break;
-		case SHIFT_L_CALC:		calcBtnShiftLActions();		 break;
-		case SHIFT_R_CALC:		calcBtnShiftRActions();	 	 break;	
-		}
-		
-		currentCalculationOperation = calculationTypeEnum.NO_OP_CALC;
-		calculationOperationInProgress = false;
-	}
 	private void performDigitButtonPressAction(View v) {
 		//If here we are dealing with a number digit
 		char c = getButtonValue(v); // Grab Char Version of Button Press
@@ -602,7 +602,7 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 			break;
 		case BINARY_MODE:
 			binstring = binstring + c;
-			uint64Instance = new BigInteger(hexstring, 2);
+			uint64Instance = new BigInteger(binstring, 2);
 			break;
 		}
 	}
@@ -611,10 +611,8 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 	//  Drives the various UI elements need to display output to the user
 	private void displayValues() {
 		String parsedNumericString;
-		int kp, k;
 		Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
 		int orient = display.getOrientation();
-		Resources res = getResources();
 
 		// Dumping config settings for debug purposes
 		String configStatus =  String.format("1: %b, 2: %b, 3: %b, 4: %b, 5: %b", testFlag1, testFlag2, testFlag3, testFlag4, testFlag5);
@@ -645,8 +643,7 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		//  ------------- HEX -----------------
 		//  might not be needed
 		//  ------------- BIN -----------------
-		if ((parsedNumericString.length()>=22) & (orient==0)) {
-			parsedNumericString = parsedNumericString.substring(parsedNumericString.length()- 22);
+		if ((txtbinary.length()>=22) & (orient==0)) {
 			txtbinary.setTextSize(10);
 			//color = res.getColor(R.color.black);
 			//txtbinary.setTextColor(color);
@@ -934,13 +931,10 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 	private void linkTextFieldsIntoControlObjects()
 	{
 		// Decimal Label and Output
-		lbldecimal = (TextView)findViewById(R.id.lbldecimal);
 		txtdecimal = (TextView)findViewById(R.id.txtdecimal);
 		// Hex Label and Output
-		lblhex = (TextView)findViewById(R.id.lblhex);
 		txthex = (TextView)findViewById(R.id.txthex);
 		// Binary Label and Output
-		lblbinary = (TextView)findViewById(R.id.lblbinary);
 		txtbinary = (TextView)findViewById(R.id.txtbinary);
 		// Other text fields for output
 		txtInformational = (TextView)findViewById(R.id.txtrotate);
