@@ -552,6 +552,7 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		calculationOperationInProgress = false;
 	}
 	// -------------- Operation Drivers -------------------------
+	// NHAT CHECK THIS!!!
 	private void calcBtnPlusActions() {
 		uint64Instance = uint64Instance_SaveValue.add(uint64Instance);
 	}
@@ -643,17 +644,22 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		//  ------------- HEX -----------------
 		//  might not be needed
 		//  ------------- BIN -----------------
-		if ((txtbinary.length()>=22) & (orient==0)) {
-			txtbinary.setTextSize(10);
-			//color = res.getColor(R.color.black);
-			//txtbinary.setTextColor(color);
-			//txtInformational.setVisibility(View.VISIBLE);
+		if ((orient==0)) 
+		{
+			if ((txtbinary.length()>=22)) {
+				txtbinary.setTextSize(10);
+			}				
+			else{
+				txtbinary.setTextSize(18);
+			}
 		}
-		else{
-			txtbinary.setTextSize(18);
-			//color = res.getColor(R.color.black);
-			//txtbinary.setTextColor(color);
-			//txtInformational.setVisibility(View.INVISIBLE);
+		else {
+			if ((txtbinary.length()>=42)){
+				txtbinary.setTextSize(10);
+			}
+			else{
+				txtbinary.setTextSize(18);
+			}
 		}
 	
 	}
