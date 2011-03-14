@@ -548,21 +548,84 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		case SHIFT_R_CALC:		calcBtnShiftRActions();	 	 break;	
 		}
 		
+		// Re-enable the keys
+		btnEquals.setEnabled(false);
+		
 		currentCalculationOperation = calculationTypeEnum.NO_OP_CALC;
 		calculationOperationInProgress = false;
 	}
 	// -------------- Operation Drivers -------------------------
 	// NHAT CHECK THIS!!!
 	private void calcBtnPlusActions() {
+		btnClear.setText("Clear");
+		btnPlus.setVisibility(View.VISIBLE);
+		btnMinus.setVisibility(View.VISIBLE);
+		btnTimes.setVisibility(View.VISIBLE);
+		btnDivide.setVisibility(View.VISIBLE);
+		btnAND.setVisibility(View.VISIBLE);
+		btnOR.setVisibility(View.VISIBLE);
+		btnNOT.setVisibility(View.VISIBLE);
+		btnXOR.setVisibility(View.VISIBLE);
+		btnShiftL.setVisibility(View.VISIBLE);
+		btnShiftR.setVisibility(View.VISIBLE);
+		btnEquals.setVisibility(View.INVISIBLE);
+		btnEquals.setEnabled(false);
+		btnPlus.setEnabled(true);
+		
 		uint64Instance = uint64Instance_SaveValue.add(uint64Instance);
 	}
 	private void calcBtnMinusActions() {
+		btnClear.setText("Clear");
+		btnPlus.setVisibility(View.VISIBLE);
+		btnMinus.setVisibility(View.VISIBLE);
+		btnTimes.setVisibility(View.VISIBLE);
+		btnDivide.setVisibility(View.VISIBLE);
+		btnAND.setVisibility(View.VISIBLE);
+		btnOR.setVisibility(View.VISIBLE);
+		btnNOT.setVisibility(View.VISIBLE);
+		btnXOR.setVisibility(View.VISIBLE);
+		btnShiftL.setVisibility(View.VISIBLE);
+		btnShiftR.setVisibility(View.VISIBLE);
+		btnEquals.setVisibility(View.INVISIBLE);
+		btnEquals.setEnabled(false);
+		btnMinus.setEnabled(true);
+		
 		uint64Instance = uint64Instance_SaveValue.subtract(uint64Instance);
 	}
 	private void calcBtnTimesActions() {
+		btnClear.setText("Clear");
+		btnPlus.setVisibility(View.VISIBLE);
+		btnMinus.setVisibility(View.VISIBLE);
+		btnTimes.setVisibility(View.VISIBLE);
+		btnDivide.setVisibility(View.VISIBLE);
+		btnAND.setVisibility(View.VISIBLE);
+		btnOR.setVisibility(View.VISIBLE);
+		btnNOT.setVisibility(View.VISIBLE);
+		btnXOR.setVisibility(View.VISIBLE);
+		btnShiftL.setVisibility(View.VISIBLE);
+		btnShiftR.setVisibility(View.VISIBLE);
+		btnEquals.setVisibility(View.INVISIBLE);
+		btnEquals.setEnabled(false);
+		btnTimes.setEnabled(true);
+		
 		uint64Instance = uint64Instance_SaveValue.multiply(uint64Instance);
 	}
 	private void calcBtnDivideActions() {
+		btnClear.setText("Clear");
+		btnPlus.setVisibility(View.VISIBLE);
+		btnMinus.setVisibility(View.VISIBLE);
+		btnTimes.setVisibility(View.VISIBLE);
+		btnDivide.setVisibility(View.VISIBLE);
+		btnAND.setVisibility(View.VISIBLE);
+		btnOR.setVisibility(View.VISIBLE);
+		btnNOT.setVisibility(View.VISIBLE);
+		btnXOR.setVisibility(View.VISIBLE);
+		btnShiftL.setVisibility(View.VISIBLE);
+		btnShiftR.setVisibility(View.VISIBLE);
+		btnEquals.setVisibility(View.INVISIBLE);
+		btnEquals.setEnabled(false);
+		btnDivide.setEnabled(true);
+		
 		if(uint64Instance==BigInteger.ZERO) {
 			Toast toast = Toast.makeText(getApplicationContext(), "Cannot divide by zero!", Toast.LENGTH_SHORT);
 			toast.show();
@@ -572,26 +635,88 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		}
 	}
 	private void calcBtnORActions() {
+		btnClear.setText("Clear");
+		btnPlus.setVisibility(View.VISIBLE);
+		btnMinus.setVisibility(View.VISIBLE);
+		btnTimes.setVisibility(View.VISIBLE);
+		btnDivide.setVisibility(View.VISIBLE);
+		btnAND.setVisibility(View.VISIBLE);
+		btnOR.setVisibility(View.VISIBLE);
+		btnNOT.setVisibility(View.VISIBLE);
+		btnXOR.setVisibility(View.VISIBLE);
+		btnShiftL.setVisibility(View.VISIBLE);
+		btnShiftR.setVisibility(View.VISIBLE);
+		btnEquals.setVisibility(View.INVISIBLE);
+		btnEquals.setEnabled(false);
+		btnOR.setEnabled(true);
+		
 		uint64Instance = uint64Instance_SaveValue.or(uint64Instance);
 	}
 	private void calcBtnANDActions() {
+		btnClear.setText("Clear");
+		btnPlus.setVisibility(View.VISIBLE);
+		btnMinus.setVisibility(View.VISIBLE);
+		btnTimes.setVisibility(View.VISIBLE);
+		btnDivide.setVisibility(View.VISIBLE);
+		btnAND.setVisibility(View.VISIBLE);
+		btnOR.setVisibility(View.VISIBLE);
+		btnNOT.setVisibility(View.VISIBLE);
+		btnXOR.setVisibility(View.VISIBLE);
+		btnShiftL.setVisibility(View.VISIBLE);
+		btnShiftR.setVisibility(View.VISIBLE);
+		btnEquals.setVisibility(View.INVISIBLE);
+		btnEquals.setEnabled(false);
+		btnAND.setEnabled(true);
+		
 		uint64Instance = uint64Instance_SaveValue.and(uint64Instance);
 	}
 	private void calcBtnShiftLActions() {
+		btnClear.setText("Clear");
+		btnPlus.setVisibility(View.VISIBLE);
+		btnMinus.setVisibility(View.VISIBLE);
+		btnTimes.setVisibility(View.VISIBLE);
+		btnDivide.setVisibility(View.VISIBLE);
+		btnAND.setVisibility(View.VISIBLE);
+		btnOR.setVisibility(View.VISIBLE);
+		btnNOT.setVisibility(View.VISIBLE);
+		btnXOR.setVisibility(View.VISIBLE);
+		btnShiftL.setVisibility(View.VISIBLE);
+		btnShiftR.setVisibility(View.VISIBLE);
+		btnEquals.setVisibility(View.INVISIBLE);
+		btnEquals.setEnabled(false);
+		btnShiftL.setEnabled(true);
+		
 		uint64Instance = uint64Instance_SaveValue.shiftLeft(1);  // TODO add context menu for multiple shifts
 	}
 	private void calcBtnShiftRActions() {
+		btnClear.setText("Clear");
+		btnPlus.setVisibility(View.VISIBLE);
+		btnMinus.setVisibility(View.VISIBLE);
+		btnTimes.setVisibility(View.VISIBLE);
+		btnDivide.setVisibility(View.VISIBLE);
+		btnAND.setVisibility(View.VISIBLE);
+		btnOR.setVisibility(View.VISIBLE);
+		btnNOT.setVisibility(View.VISIBLE);
+		btnXOR.setVisibility(View.VISIBLE);
+		btnShiftL.setVisibility(View.VISIBLE);
+		btnShiftR.setVisibility(View.VISIBLE);
+		btnEquals.setVisibility(View.INVISIBLE);
+		btnEquals.setEnabled(false);
+		btnShiftR.setEnabled(true);
+		
 		uint64Instance = uint64Instance_SaveValue.shiftRight(1);  // TODO add context menu for multiple shifts
 	}
 	private void performDigitButtonPressAction(View v) {
 		//If here we are dealing with a number digit
 		char c = getButtonValue(v); // Grab Char Version of Button Press
+		
 		// If we are in the middle of an operation, cancel it
 		if(currentCalculationOperation!=calculationTypeEnum.NO_OP_CALC) {
 			clearDisp();
-			calculationOperationInProgress = false;
-			currentCalculationOperation = calculationTypeEnum.NO_OP_CALC;
+			//calculationOperationInProgress = false;
+			//currentCalculationOperation = calculationTypeEnum.NO_OP_CALC;
 		}
+		
 		switch(currentMode) {
 		case DECIMAL_MODE:
 			decstring = decstring + c;
