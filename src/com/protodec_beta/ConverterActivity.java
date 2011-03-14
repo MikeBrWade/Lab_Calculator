@@ -52,15 +52,16 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		DECIMAL_MODE, HEX_MODE, BINARY_MODE
 	}
 	private modeTypeEnum currentMode;
-	private boolean calculationOperationInProgress, logicflag, zerosflag, shiftflag;
+	private enum calculationTypeEnum {
+		PLUS_CALC, MINUS_CALC, MULTIPLY_CALC, DIVIDE_CALC, AND_CALC, OR_CALC, NOT_CALC, SHIFT_R_CALC, SHIFT_L_CALC, NO_OP_CALC
+	}
+	private calculationTypeEnum currentCalculationOperation;
+	private boolean calculationOperationInProgress;
 	private	boolean testFlag1, testFlag2, testFlag3, testFlag4, testFlag5;
-	private int secondflag, calcstatus, binbitsflag;
 	
 	// Member Variables for Calculation and output/input
 	private String decstring, hexstring, binstring;
-	private long decvalue, decsave;
-	BigInteger uint64Instance;
-	private String tempstring;
+	BigInteger uint64Instance, uint64Instance_SaveValue;
 	private int tempInt;
 	RelativeLayout mScreen;
 
@@ -259,412 +260,350 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		
 	//  ============================================================ 
 	
-	
-	
 
 	//  =================== UI Driver and Update Methods =======================
 	// ----------------- Display Input Drivers  --------------------
+	
 	//Captures all clicks from various buttons and dispatches their commands
 	public void onClick(View v) {   
-		char c;
-		String savstring;
-		long decnew;
-		long decprod;
+		// Action Per Button Press
+		switch(v.getId()) {
+		case R.id.btnClear: 	performBtnClearActions();		  break;
+		case R.id.btnBS: 		performBtnBackSpaceActions(); 	  break;
+		case R.id.btnPlus:		performBtnPlusActions(); 		  break;
+		case R.id.btnMinus:		performBtnMinusActions(); 		  break;
+		case R.id.btnTimes:		performBtnTimesActions(); 		  break;
+		case R.id.btnDivide:	performBtnDivideActions(); 		  break;
+		case R.id.btnOR:		performBtnORActions(); 			  break;
+		case R.id.btnAND:		performBtnANDActions(); 		  break;
+		case R.id.btnXOR:		performBtnXORActions(); 		  break;
+		case R.id.btnSign:		performBtnSignActions(); 		  break;
+		case R.id.btnNOT:		performBtnNOTActions(); 		  break;
+		case R.id.btnShiftL:	performBtnShiftLActions();		  break;
+		case R.id.btnShiftR:	performBtnShiftRActions();		  break;	
+		case R.id.btnEquals:	performBtnEqualActions();		  break;
+		default: 				performDigitButtonPressAction(v); break;
+		}
+		
+		// Actions complete update UI Output Elements
+		displayValues();
+	}
+	// ------------- Input Utility functions -------------------
+	// ------------- Button Click Dispatchers ------------------
+	private void performBtnClearActions() {
+		// User pressed clear button
+		// Clear current values and the UI
+		// Remove the Op Status and Flag
+		btnClear.setText("Clear");
+		currentCalculationOperation = calculationTypeEnum.NO_OP_CALC;
+		calculationOperationInProgress = false;
+		
+		// Clear the tracking current value in the system
+		uint64Instance = BigInteger.ZERO;
+		uint64Instance_SaveValue = BigInteger.ZERO;
+		
+		clearDisp();
+		setCalcKeys();
+		setLogicKeys();	
+	}
+	private void performBtnBackSpaceActions() {
+		switch(currentMode){
+		case DECIMAL_MODE:
+			if(decstring.length()>0) {decstring = decstring.substring(0, decstring.length()-1);}
+			uint64Instance = new BigInteger(decstring); //TODO find something besides "new" to do this
+			break;
+		case HEX_MODE:
+			if(hexstring.length()>0) {hexstring = hexstring.substring(0, hexstring.length()-1);}
+			uint64Instance = new BigInteger(hexstring, 16); //TODO find something besides "new" to do this
+			break;
+		case BINARY_MODE:
+			if(binstring.length()>0) {binstring = binstring.substring(0, binstring.length()-1);}
+			uint64Instance = new BigInteger(binstring, 2); //TODO find something besides "new" to do this
+			break;
+		}
+	}
+	private void performBtnPlusActions() {
+		// Configure Button Interface for Current Operation
+		btnClear.setText("Cancel");
+		btnMinus.setVisibility(View.INVISIBLE);
+		btnTimes.setVisibility(View.INVISIBLE);
+		btnDivide.setVisibility(View.INVISIBLE);
+		btnAND.setVisibility(View.INVISIBLE);
+		btnOR.setVisibility(View.INVISIBLE);
+		btnNOT.setVisibility(View.INVISIBLE);
+		btnXOR.setVisibility(View.INVISIBLE);
+		btnShiftL.setVisibility(View.INVISIBLE);
+		btnShiftR.setVisibility(View.INVISIBLE);
+		btnEquals.setEnabled(true);
+		btnPlus.setEnabled(false);
+		
+		// Setup Operation State and Operation Type
+		currentCalculationOperation = calculationTypeEnum.PLUS_CALC;
+		calculationOperationInProgress = true;
+		
+		// Save off Previous Value for Operation
+		uint64Instance_SaveValue = uint64Instance;
+		
+	}
+	private void performBtnMinusActions() {
+		// Configure Button Interface for Current Operation
+		btnClear.setText("Cancel");
+		btnPlus.setVisibility(View.INVISIBLE);
+		btnMinus.setVisibility(View.VISIBLE);
+		btnTimes.setVisibility(View.INVISIBLE);
+		btnDivide.setVisibility(View.INVISIBLE);
+		btnAND.setVisibility(View.INVISIBLE);
+		btnOR.setVisibility(View.INVISIBLE);
+		btnNOT.setVisibility(View.INVISIBLE);
+		btnXOR.setVisibility(View.INVISIBLE);
+		btnShiftL.setVisibility(View.INVISIBLE);
+		btnShiftR.setVisibility(View.INVISIBLE);
+		btnEquals.setVisibility(View.VISIBLE);
+		btnEquals.setEnabled(true);
+		btnMinus.setEnabled(false);	
+		
+		// Setup Operation State and Operation Type
+		currentCalculationOperation = calculationTypeEnum.MINUS_CALC;
+		calculationOperationInProgress = true;
+		
+		// Save off Previous Value for Operation
+		uint64Instance_SaveValue = uint64Instance;
+	}
+	private void performBtnTimesActions() {
+		// Configure Button Interface for Current Operation
+		btnClear.setText("Cancel");
+		btnPlus.setVisibility(View.INVISIBLE);
+		btnMinus.setVisibility(View.INVISIBLE);
+		btnTimes.setVisibility(View.VISIBLE);
+		btnDivide.setVisibility(View.INVISIBLE);
+		btnAND.setVisibility(View.INVISIBLE);
+		btnOR.setVisibility(View.INVISIBLE);
+		btnNOT.setVisibility(View.INVISIBLE);
+		btnXOR.setVisibility(View.INVISIBLE);
+		btnShiftL.setVisibility(View.INVISIBLE);
+		btnShiftR.setVisibility(View.INVISIBLE);
+		btnEquals.setVisibility(View.VISIBLE);
+		btnEquals.setEnabled(true);
+		btnTimes.setEnabled(false);
+		
+		// Setup Operation State and Operation Type
+		currentCalculationOperation = calculationTypeEnum.MULTIPLY_CALC;
+		calculationOperationInProgress = true;
+		
+		// Save off Previous Value for Operation
+		uint64Instance_SaveValue = uint64Instance;
+	}
+	private void performBtnDivideActions() {
+		// Configure Button Interface for Current Operation
+		btnClear.setText("Cancel");
+		btnPlus.setVisibility(View.INVISIBLE);
+		btnMinus.setVisibility(View.INVISIBLE);
+		btnTimes.setVisibility(View.INVISIBLE);
+		btnDivide.setVisibility(View.VISIBLE);
+		btnAND.setVisibility(View.INVISIBLE);
+		btnOR.setVisibility(View.INVISIBLE);
+		btnNOT.setVisibility(View.INVISIBLE);
+		btnXOR.setVisibility(View.INVISIBLE);
+		btnShiftL.setVisibility(View.INVISIBLE);
+		btnShiftR.setVisibility(View.INVISIBLE);
+		btnEquals.setVisibility(View.VISIBLE);
+		btnEquals.setEnabled(true);
+		btnDivide.setEnabled(false);
+		
+		// Setup Operation State and Operation Type
+		currentCalculationOperation = calculationTypeEnum.DIVIDE_CALC;
+		calculationOperationInProgress = true;
+		
+		// Save off Previous Value for Operation
+		uint64Instance_SaveValue = uint64Instance;
+	}
+	private void performBtnORActions() {
+		// Configure Button Interface for Current Operation
+		btnClear.setText("Cancel");
+		btnPlus.setVisibility(View.INVISIBLE);
+		btnMinus.setVisibility(View.INVISIBLE);
+		btnTimes.setVisibility(View.INVISIBLE);
+		btnDivide.setVisibility(View.INVISIBLE);
+		btnAND.setVisibility(View.INVISIBLE);
+		btnNOT.setVisibility(View.INVISIBLE);
+		btnXOR.setVisibility(View.INVISIBLE);
+		btnShiftL.setVisibility(View.INVISIBLE);
+		btnShiftR.setVisibility(View.INVISIBLE);
+		btnEquals.setEnabled(true);
+		btnOR.setEnabled(false);
+		
+		// Setup Operation State and Operation Type
+		currentCalculationOperation = calculationTypeEnum.OR_CALC;
+		calculationOperationInProgress = true;
+		
+		// Save off Previous Value for Operation
+		uint64Instance_SaveValue = uint64Instance;
+	}
+	private void performBtnANDActions() {
+		// Configure Button Interface for Current Operation
+		btnClear.setText("Cancel");
+		btnPlus.setVisibility(View.INVISIBLE);
+		btnMinus.setVisibility(View.INVISIBLE);
+		btnTimes.setVisibility(View.INVISIBLE);
+		btnDivide.setVisibility(View.INVISIBLE);
+		btnOR.setVisibility(View.INVISIBLE);
+		btnNOT.setVisibility(View.INVISIBLE);
+		btnXOR.setVisibility(View.INVISIBLE);
+		btnShiftL.setVisibility(View.INVISIBLE);
+		btnShiftR.setVisibility(View.INVISIBLE);
+		btnEquals.setEnabled(true);
+		btnAND.setEnabled(false);
+		
+		// Setup Operation State and Operation Type
+		currentCalculationOperation = calculationTypeEnum.AND_CALC;
+		calculationOperationInProgress = true;
+		
+		// Save off Previous Value for Operation
+		uint64Instance_SaveValue = uint64Instance;
+	}
+	private void performBtnShiftLActions() {
+		// Configure Button Interface for Current Operation
+		btnClear.setText("Cancel");
+		btnPlus.setVisibility(View.INVISIBLE);
+		btnMinus.setVisibility(View.INVISIBLE);
+		btnTimes.setVisibility(View.INVISIBLE);
+		btnDivide.setVisibility(View.INVISIBLE);
+		btnOR.setVisibility(View.INVISIBLE);
+		btnAND.setVisibility(View.INVISIBLE);
+		btnNOT.setVisibility(View.INVISIBLE);
+		btnXOR.setVisibility(View.INVISIBLE);
+		btnShiftR.setVisibility(View.INVISIBLE);
+		btnEquals.setEnabled(true);
+		btnShiftL.setEnabled(false);
+		
+		// Setup Operation State and Operation Type
+		currentCalculationOperation = calculationTypeEnum.SHIFT_L_CALC;
+		calculationOperationInProgress = true;
+		
+		// Save off Previous Value for Operation
+		uint64Instance_SaveValue = uint64Instance;
+	}
+	private void performBtnShiftRActions() {
+		// Configure Button Interface for Current Operation
+		btnClear.setText("Cancel");
+		btnPlus.setVisibility(View.INVISIBLE);
+		btnMinus.setVisibility(View.INVISIBLE);
+		btnTimes.setVisibility(View.INVISIBLE);
+		btnDivide.setVisibility(View.INVISIBLE);
+		btnOR.setVisibility(View.INVISIBLE);
+		btnAND.setVisibility(View.INVISIBLE);
+		btnNOT.setVisibility(View.INVISIBLE);
+		btnXOR.setVisibility(View.INVISIBLE);
+		btnShiftL.setVisibility(View.INVISIBLE);
+		btnEquals.setEnabled(true);
+		btnShiftR.setEnabled(false);
 
-		if(v==btnClear) 
-		{
-			// User pressed clear button
-			// Clear current values and the UI
-			clearDisp();
-			setCalcKeys();
-			setLogicKeys();
+		// Setup Operation State and Operation Type
+		currentCalculationOperation = calculationTypeEnum.SHIFT_R_CALC;
+		calculationOperationInProgress = true;
+		
+		// Save off Previous Value for Operation
+		uint64Instance_SaveValue = uint64Instance;
+	}
+	private void performBtnXORActions() {
+		// Configure Button Interface for Current Operation
+		btnClear.setText("Cancel");
+		btnPlus.setVisibility(View.INVISIBLE);
+		btnMinus.setVisibility(View.INVISIBLE);
+		btnTimes.setVisibility(View.INVISIBLE);
+		btnDivide.setVisibility(View.INVISIBLE);
+		btnOR.setVisibility(View.INVISIBLE);
+		btnAND.setVisibility(View.INVISIBLE);
+		btnNOT.setVisibility(View.INVISIBLE);
+		btnShiftL.setVisibility(View.INVISIBLE);
+		btnShiftR.setVisibility(View.INVISIBLE);
+		btnEquals.setEnabled(true);
+		btnXOR.setEnabled(false);
+		
+		// Setup Operation State and Operation Type
+		currentCalculationOperation = calculationTypeEnum.SHIFT_R_CALC;
+		calculationOperationInProgress = true;
+		
+		// Save off Previous Value for Operation
+		uint64Instance_SaveValue = uint64Instance;
+	}
+	private void performBtnSignActions() {
+		uint64Instance = uint64Instance.negate();
+	}
+	private void performBtnNOTActions() {
+		uint64Instance = uint64Instance.not();
+	}
+	
+	// -------------- Operation Drivers -------------------------
+	private void calcBtnPlusActions() {
+		uint64Instance = uint64Instance_SaveValue.add(uint64Instance);
+	}
+	private void calcBtnMinusActions() {
+		uint64Instance = uint64Instance_SaveValue.subtract(uint64Instance);
+	}
+	private void calcBtnTimesActions() {
+		uint64Instance = uint64Instance_SaveValue.multiply(uint64Instance);
+	}
+	private void calcBtnDivideActions() {
+		if(uint64Instance==BigInteger.ZERO) {
+			Toast toast = Toast.makeText(getApplicationContext(), "Cannot divide by zero!", Toast.LENGTH_SHORT);
+			toast.show();
 		}
-		else if(v==btnBS) {
-			switch(currentMode){
-			case DECIMAL_MODE:
-				c = decstring.charAt(0);
-				if(decstring.length()==1) {
-					decstring = "0";	
-				}
-				else if(decstring.length()==2 && c=='-') {
-					decstring = "0";
-				}
-				else if(decstring.length()>0) {
-					decstring = decstring.substring(0, decstring.length()-1);
-				}
-				decvalue = Long.parseLong(decstring);
-				break;
-			case HEX_MODE:
-				if(hexstring.length()==1) {
-					hexstring = "0";	
-				}
-				else if(hexstring.length()>0) {
-					hexstring = hexstring.substring(0, hexstring.length()-1);
-				}
-				decvalue = Long.parseLong(hexstring, 16);
-				break;
-			case BINARY_MODE:
-				if(binstring.length()==1) {
-					binstring = "0";	
-				}
-				else if(binstring.length()>0) {
-					binstring = binstring.substring(0, binstring.length()-1);
-				}
-				decvalue = Long.parseLong(binstring, 2); 
-				break;
-			}
-			displayValues();
-		}
-		//Second flag - Plus = 1, Minus = 2, Times = 3, Divide = 4
-		//          OR = 5, NOT = 6, AND = 7, ShiftL = 8, XOR = 9, ShiftR = 10    	
-		else if(v==btnPlus) {
-			decsave = decvalue;
-			secondflag = 1;
-			calcstatus = 1;
-			btnClear.setText("Cancel");
-			btnMinus.setVisibility(View.INVISIBLE);
-			btnTimes.setVisibility(View.INVISIBLE);
-			btnDivide.setVisibility(View.INVISIBLE);
-			btnAND.setVisibility(View.INVISIBLE);
-			btnOR.setVisibility(View.INVISIBLE);
-			btnNOT.setVisibility(View.INVISIBLE);
-			btnXOR.setVisibility(View.INVISIBLE);
-			btnShiftL.setVisibility(View.INVISIBLE);
-			btnShiftR.setVisibility(View.INVISIBLE);
-			btnEquals.setEnabled(true);
-			btnPlus.setEnabled(false);
-		}
-		else if(v==btnMinus) {
-			decsave = decvalue;
-			secondflag = 2;
-			calcstatus = 1;
-			btnClear.setText("Cancel");
-			btnPlus.setVisibility(View.INVISIBLE);
-			btnMinus.setVisibility(View.VISIBLE);
-			btnTimes.setVisibility(View.INVISIBLE);
-			btnDivide.setVisibility(View.INVISIBLE);
-			btnAND.setVisibility(View.INVISIBLE);
-			btnOR.setVisibility(View.INVISIBLE);
-			btnNOT.setVisibility(View.INVISIBLE);
-			btnXOR.setVisibility(View.INVISIBLE);
-			btnShiftL.setVisibility(View.INVISIBLE);
-			btnShiftR.setVisibility(View.INVISIBLE);
-			btnEquals.setVisibility(View.VISIBLE);
-			btnEquals.setEnabled(true);
-			btnMinus.setEnabled(false);
-		}
-		else if(v==btnTimes) {
-			decsave = decvalue;
-			secondflag = 3;
-			calcstatus = 1;
-			btnClear.setText("Cancel");
-			btnPlus.setVisibility(View.INVISIBLE);
-			btnMinus.setVisibility(View.INVISIBLE);
-			btnTimes.setVisibility(View.VISIBLE);
-			btnDivide.setVisibility(View.INVISIBLE);
-			btnAND.setVisibility(View.INVISIBLE);
-			btnOR.setVisibility(View.INVISIBLE);
-			btnNOT.setVisibility(View.INVISIBLE);
-			btnXOR.setVisibility(View.INVISIBLE);
-			btnShiftL.setVisibility(View.INVISIBLE);
-			btnShiftR.setVisibility(View.INVISIBLE);
-			btnEquals.setVisibility(View.VISIBLE);
-			btnEquals.setEnabled(true);
-			btnTimes.setEnabled(false);
-		}
-		else if(v==btnDivide) {
-			decsave = decvalue;
-			secondflag = 4;
-			calcstatus = 1;
-			btnClear.setText("Cancel");
-			btnPlus.setVisibility(View.INVISIBLE);
-			btnMinus.setVisibility(View.INVISIBLE);
-			btnTimes.setVisibility(View.INVISIBLE);
-			btnDivide.setVisibility(View.VISIBLE);
-			btnAND.setVisibility(View.INVISIBLE);
-			btnOR.setVisibility(View.INVISIBLE);
-			btnNOT.setVisibility(View.INVISIBLE);
-			btnXOR.setVisibility(View.INVISIBLE);
-			btnShiftL.setVisibility(View.INVISIBLE);
-			btnShiftR.setVisibility(View.INVISIBLE);
-			btnEquals.setVisibility(View.VISIBLE);
-			btnEquals.setEnabled(true);
-			btnDivide.setEnabled(false);
-		}
-		else if(v==btnOR) {
-			decsave = decvalue;
-			secondflag = 5;
-			calcstatus = 1;
-			btnClear.setText("Cancel");
-			btnPlus.setVisibility(View.INVISIBLE);
-			btnMinus.setVisibility(View.INVISIBLE);
-			btnTimes.setVisibility(View.INVISIBLE);
-			btnDivide.setVisibility(View.INVISIBLE);
-			btnAND.setVisibility(View.INVISIBLE);
-			btnNOT.setVisibility(View.INVISIBLE);
-			btnXOR.setVisibility(View.INVISIBLE);
-			btnShiftL.setVisibility(View.INVISIBLE);
-			btnShiftR.setVisibility(View.INVISIBLE);
-			btnEquals.setEnabled(true);
-			btnOR.setEnabled(false);
-		}
-		else if(v==btnAND) {
-			decsave = decvalue;
-			secondflag = 7;
-			calcstatus = 1;
-			btnClear.setText("Cancel");
-			btnPlus.setVisibility(View.INVISIBLE);
-			btnMinus.setVisibility(View.INVISIBLE);
-			btnTimes.setVisibility(View.INVISIBLE);
-			btnDivide.setVisibility(View.INVISIBLE);
-			btnOR.setVisibility(View.INVISIBLE);
-			btnNOT.setVisibility(View.INVISIBLE);
-			btnXOR.setVisibility(View.INVISIBLE);
-			btnShiftL.setVisibility(View.INVISIBLE);
-			btnShiftR.setVisibility(View.INVISIBLE);
-			btnEquals.setEnabled(true);
-			btnAND.setEnabled(false);
-		}
-		else if(v==btnShiftL) {
-			if (shiftflag==true) {
-				decsave = decvalue;
-				secondflag = 8;
-				calcstatus = 1;
-				btnClear.setText("Cancel");
-				btnPlus.setVisibility(View.INVISIBLE);
-				btnMinus.setVisibility(View.INVISIBLE);
-				btnTimes.setVisibility(View.INVISIBLE);
-				btnDivide.setVisibility(View.INVISIBLE);
-				btnOR.setVisibility(View.INVISIBLE);
-				btnAND.setVisibility(View.INVISIBLE);
-				btnNOT.setVisibility(View.INVISIBLE);
-				btnXOR.setVisibility(View.INVISIBLE);
-				btnShiftR.setVisibility(View.INVISIBLE);
-				btnEquals.setEnabled(true);
-				btnShiftL.setEnabled(false);
-			}
-			else {
-				//			Just shift one position left
-				decvalue = decvalue << 1;
-				displayValues();
-			}
-
-		}
-		else if(v==btnXOR) {
-			decsave = decvalue;
-			secondflag = 9;
-			calcstatus = 1;
-			btnClear.setText("Cancel");
-			btnPlus.setVisibility(View.INVISIBLE);
-			btnMinus.setVisibility(View.INVISIBLE);
-			btnTimes.setVisibility(View.INVISIBLE);
-			btnDivide.setVisibility(View.INVISIBLE);
-			btnOR.setVisibility(View.INVISIBLE);
-			btnAND.setVisibility(View.INVISIBLE);
-			btnNOT.setVisibility(View.INVISIBLE);
-			btnShiftL.setVisibility(View.INVISIBLE);
-			btnShiftR.setVisibility(View.INVISIBLE);
-			btnEquals.setEnabled(true);
-			btnXOR.setEnabled(false);
-		}
-		else if(v==btnShiftR) {
-			if (shiftflag==true) {
-				decsave = decvalue;
-				secondflag = 10;
-				calcstatus = 1;
-				btnClear.setText("Cancel");
-				btnPlus.setVisibility(View.INVISIBLE);
-				btnMinus.setVisibility(View.INVISIBLE);
-				btnTimes.setVisibility(View.INVISIBLE);
-				btnDivide.setVisibility(View.INVISIBLE);
-				btnOR.setVisibility(View.INVISIBLE);
-				btnAND.setVisibility(View.INVISIBLE);
-				btnNOT.setVisibility(View.INVISIBLE);
-				btnXOR.setVisibility(View.INVISIBLE);
-				btnShiftL.setVisibility(View.INVISIBLE);
-				btnEquals.setEnabled(true);
-				btnShiftR.setEnabled(false);
-			}
-			else {
-				//			Just shift one position right    			
-				decvalue = decvalue >> 1;
-				displayValues();
-			}
-		}
-
-		else if(v==btnSign) {
-			decvalue = -decvalue;
-			displayValues();
-		}
-
-		else if(v==btnNOT) {
-			decvalue = ~decvalue;
-			displayValues();
-		}
-
-		else if(v==btnEquals) {
-			if(secondflag==1) {
-				//				Plus
-				decnew = decvalue + decsave;
-				if ( (decvalue > 0 && decsave > 0 && (decnew < decvalue || decnew < decsave))
-						|| (decvalue < 0 && decsave < 0 && (decnew > decvalue || decnew > decsave))) {
-					Toast toast = Toast.makeText(getApplicationContext(), "Maximum number reached!", Toast.LENGTH_SHORT);
-					toast.show();	
-					decvalue = decsave;
-				}
-				else {
-					decvalue = decnew;
-				}
-				displayValues();
-			}
-			else if(secondflag==2) {
-				// 			Minus
-				decnew = decsave - decvalue;
-				if ( (decsave > 0 && decvalue < 0 && (decnew < decvalue || decnew < decsave))
-						|| (decsave < 0 && decvalue > 0 && (decnew > decvalue || decnew > decsave))) {
-					Toast toast = Toast.makeText(getApplicationContext(), "Maximum number reached!", Toast.LENGTH_SHORT);
-					toast.show();	
-					decvalue = decsave;
-				}
-				else {
-					decvalue = decnew;
-				}
-				displayValues();
-			}
-
-			else if(secondflag==3) {
-				// 			Times
-				decnew = decvalue * decsave;
-				if (decsave!=0) {
-					decprod = decnew / decsave;
-					if (decvalue != decprod) {
-						Toast toast = Toast.makeText(getApplicationContext(), "Maximum number reached!", Toast.LENGTH_SHORT);
-						toast.show();	
-						decvalue = decsave;
-					}
-					else {
-						decvalue = decnew;
-					}
-				}
-				else {
-					decvalue = decnew;
-				}
-				displayValues();
-			}
-
-			else if(secondflag==4) {
-				// 			Divide
-				if(decvalue==0) {
-					Toast toast = Toast.makeText(getApplicationContext(), "Cannot divide by zero!", Toast.LENGTH_SHORT);
-					toast.show();	
-					clearDisp();
-				}
-				else {
-					decvalue = decsave / decvalue;
-					displayValues();
-				}
-			}
-			else if(secondflag==5) {
-				// 			OR
-				decvalue = decsave | decvalue;
-				displayValues();
-			}
-			else if(secondflag==7) {
-				// 			AND
-				decvalue = decsave & decvalue;
-				displayValues();
-			}
-			else if(secondflag==8) {
-				// 			ShiftL
-				if(decvalue<=0) {
-					decvalue = decsave;
-				}
-				else if(decvalue>63) {
-					clearDisp();
-				}
-				else {
-					int k = (int) decvalue;
-					decvalue = decsave << k;
-				}
-				displayValues();
-			}
-			else if(secondflag==9) {
-				// 			XOR
-				decvalue = decsave ^ decvalue;
-				displayValues();
-			}
-			else if(secondflag==10) {
-				// 			ShiftR
-				if(decvalue<=0) {
-					decvalue = decsave;
-				}
-				else if(decvalue>63) {
-					clearDisp();
-				}
-				else {
-					String binsave = Long.toBinaryString(decsave);
-					int k = (int) decvalue;
-					if (k<binsave.length()) {
-						int kx = binsave.length() - k;
-						String newbin = binsave.substring(0, kx);
-						decvalue = Long.parseLong(newbin, 2);
-					}
-					else {
-						decvalue = 0;
-					}
-				}
-				displayValues();
-			}
-			secondflag=0;
-			calcstatus = 1;
-			setCalcKeys();
-			setLogicKeys();
-			btnClear.setText("Clear");
-		}
-
 		else {
-			//If here we are dealing with a number digit
-			c = getButtonValue(v);
-			if(calcstatus==1) {
-				clearDisp();
-				calcstatus=0;
-			}
-			switch(currentMode) {
-			case DECIMAL_MODE:
-				savstring = decstring;
-				decstring = decstring + c;
-				try {
-					decvalue = Long.parseLong(decstring);
-				}
-				catch (Exception e) {
-					Toast toast = Toast.makeText(getApplicationContext(), "Maximum number reached!", Toast.LENGTH_SHORT);
-					toast.show();	
-					decstring = savstring;
-				}
-			case HEX_MODE:
-				savstring = hexstring;
-				hexstring = hexstring + c;
-				try {
-					decvalue = Long.parseLong(hexstring, 16);
-				}
-				catch (Exception e) {
-					Toast toast = Toast.makeText(getApplicationContext(), "Maximum number reached!", Toast.LENGTH_SHORT);
-					toast.show();
-					hexstring = savstring;
-				}
-			case BINARY_MODE:
-				savstring = binstring;
-				binstring = binstring + c;
-				try {  	
-					decvalue = Long.parseLong(binstring, 2);
-				}
-				catch (Exception e) {
-					Toast toast = Toast.makeText(getApplicationContext(), "Maximum number reached!", Toast.LENGTH_SHORT);
-					toast.show();
-					binstring = savstring;
-				}
-			}
-			displayValues();
+			uint64Instance = uint64Instance_SaveValue.divide(uint64Instance);
+		}
+	}
+	private void calcBtnORActions() {
+		uint64Instance = uint64Instance_SaveValue.or(uint64Instance);
+	}
+	private void calcBtnANDActions() {
+		uint64Instance = uint64Instance_SaveValue.and(uint64Instance);
+	}
+	private void calcBtnShiftLActions() {
+		uint64Instance = uint64Instance_SaveValue.shiftLeft(1);  // TODO add context menu for multiple shifts
+	}
+	private void calcBtnShiftRActions() {
+		uint64Instance = uint64Instance_SaveValue.shiftRight(1);  // TODO add context menu for multiple shifts
+	}
+	// ----------------------------------------------------------
+	private void performBtnEqualActions() {
+		switch(currentCalculationOperation)
+		{
+		case PLUS_CALC:			calcBtnPlusActions();  		 break;
+		case MINUS_CALC:		calcBtnMinusActions(); 		 break;
+		case MULTIPLY_CALC:		calcBtnTimesActions(); 		 break;
+		case DIVIDE_CALC:		calcBtnDivideActions(); 	 break;
+		case OR_CALC:			calcBtnORActions(); 		 break;
+		case AND_CALC:			calcBtnANDActions(); 		 break;
+		case SHIFT_L_CALC:		calcBtnShiftLActions();		 break;
+		case SHIFT_R_CALC:		calcBtnShiftRActions();	 	 break;	
+		}
+		
+		currentCalculationOperation = calculationTypeEnum.NO_OP_CALC;
+		calculationOperationInProgress = false;
+	}
+	private void performDigitButtonPressAction(View v) {
+		//If here we are dealing with a number digit
+		char c = getButtonValue(v); // Grab Char Version of Button Press
+		// If we are in the middle of an operation, cancel it
+		if(currentCalculationOperation!=calculationTypeEnum.NO_OP_CALC) {
+			clearDisp();
+			calculationOperationInProgress = false;
+			currentCalculationOperation = calculationTypeEnum.NO_OP_CALC;
+		}
+		switch(currentMode) {
+		case DECIMAL_MODE:
+			decstring = decstring + c;
+			uint64Instance = new BigInteger(decstring, 10);
+			break;
+		case HEX_MODE:
+			hexstring = hexstring + c;
+			uint64Instance = new BigInteger(hexstring, 16);
+			break;
+		case BINARY_MODE:
+			binstring = binstring + c;
+			uint64Instance = new BigInteger(hexstring, 2);
+			break;
 		}
 	}
 	
@@ -688,25 +627,17 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		
 		// =====================  OUTPUTTING FIELDS ====================
 		//  ------------- DEC -----------------
-		//  Display decvalue on the 4 output fields		
-		decstring = Long.toString(decvalue);
-		parsedNumericString = NumberFormat.getInstance().format(decvalue);
+		decstring = uint64Instance.toString(10);
+		parsedNumericString = NumberFormat.getInstance().format(uint64Instance);
 		txtdecimal.setText(parsedNumericString);
-
 		
 		//  ------------- HEX -----------------
-		hexstring = Long.toHexString(decvalue);
-		parsedNumericString = Long.toHexString(decvalue);
-		parsedNumericString = parsedNumericString.toUpperCase();
-		
-		// This pads the HEX at the word boundary
-		txthex.setText(padString(parsedNumericString,8));
+		hexstring = uint64Instance.toString(16);
+		txthex.setText(padString(uint64Instance.toString(16).toUpperCase(),8)); // Pad to the word
 
 		//  ------------- BIN -----------------
-		binstring = Long.toBinaryString(decvalue);
-		parsedNumericString = Long.toBinaryString(decvalue);
-		// This pads the BIN at the byte boundary
-		txtbinary.setText(padString(parsedNumericString,8));
+		binstring = uint64Instance.toString(2);
+		txtbinary.setText(padString(uint64Instance.toString(2).toUpperCase(),8)); // Pad to the byte
 
 		// Now that we have the strings lets scale the fields based on the size and the orientation
 		//  ------------- DEC -----------------
@@ -738,10 +669,7 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		txthex.setTextSize(18);
 		txtbinary.setText("0");
 		txtbinary.setTextSize(18);
-		
-		uint64Instance = BigInteger.ZERO;
-		decvalue = 0;
-		
+
 		decstring = "0";
 		hexstring = "0";
 		binstring = "0";
@@ -767,7 +695,7 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		// Grab the current value of the UI Input
 		// This will need to be updated system wide but for now I am just trying it with the current 63 bit + 1 signed bit long value
 		// I assumed this 64 bit value could be used unsigned but Java doesn't allow it.
-		uint64Instance = BigInteger.valueOf(decvalue);
+		//uint64Instance = BigInteger.valueOf(decvalue);
 
 		// Grab the bit count and create the Hex Display
 		bitCountofCurrentValue = uint64Instance.bitLength();
@@ -801,46 +729,39 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 	}
 	private char getButtonValue(View v) {
 		// TODO There has to be a better way, could I pull the value and reinterpret? 
-		//    that would probably be more runtime expensive though I can't "switch" on 
-		//    a view value and extracting text from the button elements then massaging
+		//    that would probably be more runtime expensive though and extracting text 
+		//    from the button elements then massaging
 		//    then into values I can use probably would be worse
-		char c;
-		c = '0';
-		if(v==btn0)      { c = '0'; }
-		else if(v==btn1) { c = '1'; }
-		else if(v==btn2) { c = '2'; }
-		else if(v==btn3) { c = '3';	}
-		else if(v==btn4) { c = '4'; }
-		else if(v==btn5) { c = '5';	}
-		else if(v==btn6) { c = '6'; }
-		else if(v==btn7) { c = '7';	}
-		else if(v==btn8) { c = '8';	}
-		else if(v==btn9) { c = '9';	}
-		else if(v==btnA) { c = 'A';	}
-		else if(v==btnB) { c = 'B';	}
-		else if(v==btnC) { c = 'C'; }
-		else if(v==btnD) { c = 'D';	}
-		else if(v==btnE) { c = 'E';	}
-		else if(v==btnF) { c = 'F';	}
+		char c = '0';	
+		switch(v.getId()) {
+		case R.id.btn0:	c = '0'; break;
+		case R.id.btn1:	c = '1'; break;
+		case R.id.btn2: c = '2'; break;
+		case R.id.btn3:	c = '3'; break;
+		case R.id.btn4:	c = '4'; break;
+		case R.id.btn5:	c = '5'; break;
+		case R.id.btn6:	c = '6'; break;
+		case R.id.btn7:	c = '7'; break;
+		case R.id.btn8:	c = '8'; break;
+		case R.id.btn9:	c = '9'; break;
+		case R.id.btnA:	c = 'A'; break;
+		case R.id.btnB:	c = 'B'; break;
+		case R.id.btnC:	c = 'C'; break;
+		case R.id.btnD:	c = 'D'; break;
+		case R.id.btnE:	c = 'E'; break;
+		case R.id.btnF:	c = 'F'; break;
+		}
 		return c;
 	}
 	
 	// Handles the click of the radio buttons   
 	private OnClickListener radio_listener = new OnClickListener() {
-		public void onClick(View v) 
-		{
+		public void onClick(View v){
 			// Perform action on clicks
-			if(v==radio_dec) {
-				setDecButtons();
-				currentMode = modeTypeEnum.DECIMAL_MODE;
-			}
-			else if(v==radio_hex) {
-				setHexButtons();
-				currentMode = modeTypeEnum.HEX_MODE;
-			}
-			else if(v==radio_bin) {
-				setBinButtons();
-				currentMode = modeTypeEnum.BINARY_MODE;
+			switch(v.getId()) {
+			case R.id.radio_dec: setDecButtons(); currentMode = modeTypeEnum.DECIMAL_MODE; break;
+			case R.id.radio_hex: setHexButtons(); currentMode = modeTypeEnum.HEX_MODE; break;
+			case R.id.radio_bin: setBinButtons(); currentMode = modeTypeEnum.BINARY_MODE; break;
 			}
 		}
 	};
@@ -886,8 +807,6 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 
 		case R.id.mnuClear:
 			clearDisp();
-			secondflag=0;
-			calcstatus=0;
 			setCalcKeys();  
 			setLogicKeys();
 			return true;
@@ -939,11 +858,9 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		SharedPreferences.Editor editor = preferences.edit();
 
 		mode = currentMode.ordinal();
-		editor.putLong("decvalue", decvalue);
-		editor.putLong("decsave", decsave);
+		editor.putString("uint64", uint64Instance.toString());
+		editor.putString("uint64_save", uint64Instance_SaveValue.toString());
 		editor.putInt("currentMode", mode);
-		editor.putInt("secondflag", secondflag);
-		editor.putInt("calcstatus", calcstatus);
 		editor.commit();
 	}
 	protected void onResume() {
@@ -951,12 +868,9 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		super.onResume();
 
 		SharedPreferences preferences = getPreferences(MODE_PRIVATE);
-		decvalue = preferences.getLong("decvalue", 0);
-		decsave = preferences.getLong("decsave", 0);
-		//tempstring = preferences.getString("currentMode", "d");
+		uint64Instance = new BigInteger(preferences.getString("uint64", "0"));
+		uint64Instance_SaveValue= new BigInteger(preferences.getString("uint64_save", "0"));
 		tempInt = preferences.getInt("currentMode", 0);
-		secondflag = preferences.getInt("secondflag", 0);
-		calcstatus = preferences.getInt("calcstatus", 0);
 
 		switch(tempInt) {
 		case 0:
@@ -983,15 +897,10 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		
 		
 		calculationOperationInProgress = def_prefs.getBoolean("calculationOperationInProgress", true);
-		logicflag = def_prefs.getBoolean("logicflag", true);
-		zerosflag = def_prefs.getBoolean("zerosflag", true);
-		shiftflag = def_prefs.getBoolean("shiftflag", false);
 		String tempst = def_prefs.getString("backgroundflag", "1");
 	
 		tempst = def_prefs.getString("userbaseflag", "8");
 		tempst = def_prefs.getString("binbitsflag", "0");
-		binbitsflag = Integer.valueOf(tempst);
-
 		switch(currentMode) {
 		case DECIMAL_MODE:
 			radio_dec.setChecked(true);
