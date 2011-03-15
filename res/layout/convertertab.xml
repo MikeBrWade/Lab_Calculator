@@ -1,35 +1,328 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <AbsoluteLayout 
-    	android:id="@+id/linearLayout1" 
-    	xmlns:android="http://schemas.android.com/apk/res/android" android:layout_height="wrap_content" android:layout_width="wrap_content">
-        <TableLayout android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/tableLayout1" android:layout_x="0dp" android:layout_y="0dp" android:stretchColumns="1">
-            <TableRow android:id="@+id/tableRow1" android:layout_width="fill_parent" android:layout_height="wrap_content"></TableRow>
-            	<TextView  android:text="@string/mainTitleString" android:id="@+id/textView1" android:layout_height="wrap_content" android:layout_width="fill_parent" android:textStyle="bold" android:textSize="24px"></TextView>
-            	<TableRow  android:layout_height="wrap_content" android:id="@+id/tableRow2" android:layout_width="fill_parent">
-                		<TextView android:text="@string/decimalInputLabelText" android:id="@+id/textView2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:typeface="monospace"></TextView>
-                		<EditText android:text="" android:id="@+id/decText" android:layout_height="wrap_content" android:layout_width="wrap_content" android:inputType="numberDecimal"></EditText>
-            	</TableRow>
-            	<TableRow  android:id="@+id/tableRow3" android:layout_height="wrap_content" android:layout_width="match_parent">
-                		<TextView android:text="@string/hexInputLabelText" android:id="@+id/textView3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:typeface="monospace"></TextView>
-                		<EditText android:text="" android:layout_height="wrap_content" android:id="@+id/hexText" android:layout_width="wrap_content"></EditText>
-            	</TableRow>
-            	<TableRow android:id="@+id/tableRow4" android:layout_height="wrap_content" android:layout_width="match_parent">
-               			<TextView android:text="@string/binInputLabelText" android:id="@+id/textView4" android:layout_width="wrap_content" android:layout_height="wrap_content" android:typeface="monospace" ></TextView>
-                		<EditText android:text="" android:id="@+id/binText" android:layout_width="wrap_content" android:layout_height="wrap_content" android:inputType="numberDecimal"></EditText>
-            	</TableRow>            
-        </TableLayout>
-        <TableLayout android:layout_width="fill_parent" android:layout_height="wrap_content" android:id="@+id/tableLayout2" android:layout_x="0dp" android:layout_y="170dp" android:stretchColumns="1">
-        	<TableRow android:id="@+id/tableRow5" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_gravity="center_horizontal" android:baselineAligned="true">
-                <RadioGroup android:layout_x="0dip" android:id="@+id/radioGroup1" android:layout_gravity="center_horizontal" 
-                	android:layout_height="wrap_content" android:layout_width="match_parent" android:layout_weight="1" android:orientation="horizontal">               
-                	<RadioButton android:id="@+id/radioButton1" android:layout_height="wrap_content" android:text="@string/decRadioText" 
-                		android:typeface="monospace" android:layout_width="150px" android:layout_gravity="center_horizontal" android:layout_weight="1" android:layout_marginLeft="40px"></RadioButton>
-                	<RadioButton android:id="@+id/radioButton2" android:layout_height="wrap_content" android:text="@string/hexRadioTex" 
-                		android:typeface="monospace" android:layout_width="150px" android:layout_gravity="center_horizontal" android:layout_weight="1"></RadioButton>
-                	<RadioButton android:id="@+id/radioButton3" android:layout_height="wrap_content" android:text="@string/binRadioText"
-						android:typeface="monospace" android:layout_width="150px" android:layout_gravity="center_horizontal" android:layout_weight="1"></RadioButton>
-                </RadioGroup>
-            </TableRow>
-        </TableLayout>
-    </AbsoluteLayout>
-  
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:id="@+id/myScreen">	
+	<TableLayout  android:id="@+id/table1"
+    	android:layout_width="fill_parent"
+	    android:layout_height="wrap_content" 
+	    android:stretchColumns="1" >
+	<TableRow>
+    	<TextView
+        	android:id="@+id/lbldecimal"
+        	android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+        	android:textColor="@color/white"
+        	android:paddingLeft="1dp"
+        	android:text="Decimal:"/>
+    	<TextView
+        	android:id="@+id/txtdecimal"
+	        android:layout_width="fill_parent"
+    	    android:layout_height="35dp"
+        	android:background="@android:drawable/editbox_background"
+        	android:textColor="@color/black" 
+        	android:textSize="18sp"       
+	        android:gravity="center_vertical|right"
+	        android:inputType="text"
+    	    android:text=""/>
+	</TableRow>
+
+	<TableRow>
+		<TextView
+        	android:id="@+id/lblhex"
+	        android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+        	android:paddingLeft="1dp"
+	        android:textColor="@color/white"
+    	    android:text="Hex:"/>
+    	<TextView
+	        android:id="@+id/txthex"
+    	    android:layout_width="fill_parent"
+        	android:layout_height="35dp"
+	        android:background="@android:drawable/editbox_background"
+        	android:textColor="@color/black"
+        	android:textSize="18sp"       
+	        android:gravity="center_vertical|right"
+	        android:inputType="text"
+    	    android:text=""/>
+	</TableRow>
+
+	<TableRow>
+    	<TextView
+        	android:id="@+id/lblbinary"
+	        android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+        	android:paddingLeft="1dp"
+        	android:textColor="@color/white"
+	        android:text="Binary:"/>
+    	<TextView
+        	android:id="@+id/txtbinary"
+	        android:layout_width="fill_parent"
+    	    android:layout_height="35dp"
+    	    android:background="@android:drawable/editbox_background"
+        	android:textColor="@color/black"
+        	android:textSize="18sp"       
+        	android:gravity="center_vertical|right"        	
+	        android:inputType="text"
+    	    android:text=""/>
+	</TableRow>
+	</TableLayout>
+		<TextView
+	        android:id="@+id/txtprecision"
+	        android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:textSize="12dp"
+    	    android:textColor="@color/white"
+    	    android:layout_below="@+id/table1"
+    	    android:layout_alignParentLeft="true"
+    	    android:visibility="invisible"
+    	    android:paddingLeft="3dp"
+    	    android:text="(8-bit)"/>
+		<TextView
+	        android:id="@+id/txtrotate"
+	        android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:textSize="12dp"
+    	    android:textColor="@color/white"
+    	    android:visibility="invisible"
+    	    android:layout_below="@+id/table1"
+    	    android:layout_centerHorizontal="true"
+	        android:text="(Rotate to view all binary digits)"/>
+		<TextView
+	        android:id="@+id/txtcomp"
+	        android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:textSize="12dp"
+    	    android:textStyle="bold"
+    	    android:visibility="invisible"
+    	    android:textColor="@color/white"
+    	    android:layout_below="@+id/table1"
+    	    android:layout_alignRight="@+id/table1"
+	        android:text="1s comp"/>
+	    
+    <RadioGroup  android:id="@+id/radiogroup1"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerHorizontal="true"
+      android:layout_below="@+id/txtrotate"
+      android:orientation="horizontal">
+      <RadioButton android:id="@+id/radio_dec"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="dec  " />
+      <RadioButton android:id="@+id/radio_hex"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="hex  " />
+      <RadioButton android:id="@+id/radio_bin"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="bin  " />
+    </RadioGroup>    
+
+	<TableLayout android:id="@+id/table2"
+	    android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:stretchColumns="0,1,2,3,4,5" 
+    	android:layout_below="@+id/radiogroup1" >
+	<TableRow>
+	    <Button
+    	    android:id="@+id/btnA"
+        	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+    	    android:text="A" />
+	    <Button
+    	    android:id="@+id/btnB"
+        	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+    	    android:text="B" />
+	    <Button
+    	    android:id="@+id/btnC"
+        	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+    	    android:text="C" />
+	    <Button
+    	    android:id="@+id/btnD"
+        	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+    	    android:text="D" />
+	    <Button
+    	    android:id="@+id/btnE"
+        	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+    	    android:text="E" />
+    	<Button
+        	android:id="@+id/btnF"
+	        android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+        	android:text="F" />
+	</TableRow>
+    <TableRow>
+	    <Button
+    	    android:id="@+id/btn7"
+        	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="7" />
+	    <Button
+    	    android:id="@+id/btn8"
+        	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="8" />
+    	<Button
+        	android:id="@+id/btn9"
+	        android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+        	android:text="9" />
+	    <Button
+    	    android:id="@+id/btnNOT"
+        	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+    	    android:visibility="invisible"
+	        android:layout_gravity="center_vertical"
+    	    android:textSize="9sp"
+    	    android:textColor="@color/red"
+        	android:text="NOT" />
+    	<Button
+        	android:id="@+id/btnBS"
+	        android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+ 	        android:layout_gravity="center_vertical"
+    	    android:textSize="9sp"
+        	android:text="BS" />
+	    <Button
+    	    android:id="@+id/btnClear"
+        	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+ 	        android:layout_gravity="center_vertical"
+    	    android:textSize="9sp"
+    	    android:text="Clear" />
+	</TableRow>
+	<TableRow>
+    	<Button
+        	android:id="@+id/btn4"
+	        android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:text="4" />
+    	<Button
+	        android:id="@+id/btn5"
+    	    android:layout_width="wrap_content"
+        	android:layout_height="wrap_content"
+    	    android:text="5" />
+    	<Button
+        	android:id="@+id/btn6"
+	        android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+    	    android:text="6" />
+	    <Button
+    	    android:id="@+id/btnTimes"
+        	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+        	android:text="x" />
+	    <Button
+    	    android:id="@+id/btnDivide"
+        	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+        	android:text="÷" />
+	    <Button
+    	    android:id="@+id/btnShiftL"
+        	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_vertical"
+    	    android:visibility="invisible"
+    	    android:textSize="9sp"
+    	    android:textColor="@color/red"
+        	android:text="Shift-L" />
+	</TableRow>
+	<TableRow>
+	    <Button
+    	    android:id="@+id/btn1"
+        	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="1" />
+	    <Button
+    	    android:id="@+id/btn2"
+        	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="2" />
+	    <Button
+    	    android:id="@+id/btn3"
+        	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="3" />
+	    <Button
+    	    android:id="@+id/btnPlus"
+        	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+        	android:text="+" />
+	    <Button
+    	    android:id="@+id/btnMinus"
+        	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+        	android:text="-" />
+	    <Button
+    	    android:id="@+id/btnShiftR"
+        	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_vertical"
+    	    android:visibility="invisible"
+    	    android:textSize="9sp"
+    	    android:textColor="@color/red"
+        	android:text="Shift-R" />
+	</TableRow>
+	<TableRow>
+	    <Button
+    	    android:id="@+id/btn0"
+        	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+        	android:text="0" />
+    	<Button
+        	android:id="@+id/btnSign"
+	        android:layout_width="wrap_content"
+    	    android:layout_height="wrap_content"
+        	android:text="+/-" />
+	    <Button
+    	    android:id="@+id/btnAND"
+        	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+    	    android:visibility="invisible"
+	        android:layout_gravity="center_vertical"
+    	    android:textSize="9sp"
+    	    android:textColor="@color/red"
+        	android:text="AND" />
+	    <Button
+    	    android:id="@+id/btnOR"
+        	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+    	    android:visibility="invisible"
+	        android:layout_gravity="center_vertical"
+    	    android:textSize="9sp"
+    	    android:textColor="@color/red"
+        	android:text="OR" />
+	    <Button
+    	    android:id="@+id/btnXOR"
+        	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+    	    android:visibility="invisible"
+	        android:layout_gravity="center_vertical"
+    	    android:textSize="9sp"
+    	    android:textColor="@color/red"
+        	android:text="XOR" />
+	    <Button
+    	    android:id="@+id/btnEquals"
+        	android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="=" />
+    </TableRow>    	
+    </TableLayout>
+    		<TextView
+	        android:id="@+id/txtTestParse"
+	        android:layout_width="fill_parent"
+    	    android:layout_height="wrap_content"
+    	    android:textSize="10dp"
+    	    android:textColor="@color/white"
+    	    android:visibility="invisible"
+    	    android:layout_below="@+id/table2"
+    	    android:layout_gravity="fill_horizontal"/>
+</RelativeLayout>
+
+

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <color name="background">#4682b4</color>
+  <color name="white">#FFFFFF</color>
+  <color name="gold">#FFd700</color>
+  <color name="black">#000000</color>
+  <color name="teal">#008080</color>
+  <color name="silver">#C0C0C0</color>
+  <color name="steelblue">#4682B4</color>
+  <color name="pink">#FFC0CB</color>
+  <color name="plum">#DDA0DD</color>
+  <color name="olivedrab">#6B8E23</color>
+  <color name="red">#FF0000</color>
+  <color name="purple">#800080</color>
+  <color name="brown">#8B4513</color>
+</resources>
