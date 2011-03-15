@@ -712,7 +712,7 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		
 		// If we are in the middle of an operation, cancel it
 		if(currentCalculationOperation!=calculationTypeEnum.NO_OP_CALC) {
-			clearDisp();
+			//clearDisp();
 			//calculationOperationInProgress = false;
 			//currentCalculationOperation = calculationTypeEnum.NO_OP_CALC;
 		}
