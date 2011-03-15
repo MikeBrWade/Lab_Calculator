@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/encoderScreen">
+    <EditText android:layout_alignParentTop="true" android:layout_height="wrap_content" android:text="Browse..." android:id="@+id/browseText" android:layout_width="225dip"></EditText>
+    <TextView android:layout_below="@+id/browseText" android:layout_alignLeft="@+id/browseText" android:layout_width="match_parent" android:id="@+id/fileContent" android:text="ContentOfFile" android:layout_height="wrap_content" android:layout_above="@+id/button2"></TextView>
+    <Button android:layout_toRightOf="@+id/browseText" android:layout_height="wrap_content" android:layout_alignTop="@+id/browseText" android:layout_alignBottom="@+id/browseText" android:text="Open" android:id="@+id/openButton" android:layout_width="match_parent"></Button>
+    <Button android:layout_alignParentBottom="true" android:layout_height="wrap_content" android:id="@+id/button1" android:layout_width="wrap_content" android:layout_alignParentLeft="true" android:text="test1"></Button>
+    <Button android:layout_alignParentBottom="true" android:layout_height="wrap_content" android:id="@+id/button2" android:layout_width="wrap_content" android:layout_alignParentRight="false" android:layout_centerHorizontal="true" android:text="test2"></Button>
+    <Button android:layout_alignParentBottom="true" android:layout_height="wrap_content" android:id="@+id/button3" android:layout_width="wrap_content" android:layout_alignParentRight="true" android:text="test3"></Button>
+</RelativeLayout>
