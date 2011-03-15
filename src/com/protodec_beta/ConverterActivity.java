@@ -287,12 +287,22 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		// Actions complete update UI Output Elements
 		displayValues();
 	}
+	public void onLongClick(View v) {
+		// TODO This isn't currently working, not sure what I need to do to "register" a button for long click events
+		//  I can get a context menu to pop up but that's not always what I want.
+		switch(v.getId()) {
+		case R.id.btnClear: 	performBtnClearLongClickActions();	break;
+		}
+		
+		// Actions complete update UI Output Elements
+		displayValues();
+		
+	}
 	// ------------- Input Utility functions -------------------
 	// ------------- Button Click Dispatchers ------------------
 	private void performBtnClearActions() {
-		// User pressed clear button
-		// Clear current values and the UI
-		// Remove the Op Status and Flag
+		// Clear any of the bad state that could have happened.
+		
 		btnClear.setText("Clear");
 		currentCalculationOperation = calculationTypeEnum.NO_OP_CALC;
 		calculationOperationInProgress = false;
@@ -301,9 +311,51 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		uint64Instance = BigInteger.ZERO;
 		uint64Instance_SaveValue = BigInteger.ZERO;
 		
+		// First reset the Input Buttons to the default mode state
+		switch(currentMode) {
+		case DECIMAL_MODE:
+			radio_dec.setChecked(true);
+			setDecButtons();
+			break;
+		case HEX_MODE:
+			radio_hex.setChecked(true);
+			setHexButtons();
+			break;
+		case BINARY_MODE:
+			radio_bin.setChecked(true);
+			setBinButtons();
+			break;
+		default:    
+			// In any other case just set to decimal as default
+			radio_dec.setChecked(true);
+			setDecButtons();
+			break;
+		}	
+		
+		// re enable all the user operation keys in case they get stuck
+		btnEquals.setEnabled(false);
+		btnPlus.setEnabled(true);
+		btnMinus.setEnabled(true);
+		btnTimes.setEnabled(true);
+		btnDivide.setEnabled(true);
+		btnAND.setEnabled(true);
+		btnOR.setEnabled(true);
+		btnNOT.setEnabled(true);
+		btnXOR.setEnabled(true);
+		btnShiftL.setEnabled(true);
+		btnShiftR.setEnabled(true);
+
 		clearDisp();
 		setCalcKeys();
 		setLogicKeys();	
+		displayValues();
+	}
+	private void performBtnClearLongClickActions() {
+		// Long Click of a clear
+		//  TODO I moved the "real" code into the normal click for two reasons
+		//    1) I can't get long click to fire for some reason
+		//    2) I think I always want to do the FULL clear
+			
 	}
 	private void performBtnBackSpaceActions() {
 		switch(currentMode){
@@ -346,6 +398,11 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		// Save off Previous Value for Operation
 		uint64Instance_SaveValue = uint64Instance;
 		
+		// Now that we have saved it off we need to clear it for the next operation
+		uint64Instance = BigInteger.ZERO;
+		clearDisp();
+		displayValues();
+		
 	}
 	private void performBtnMinusActions() {
 		// Configure Button Interface for Current Operation
@@ -370,6 +427,11 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		
 		// Save off Previous Value for Operation
 		uint64Instance_SaveValue = uint64Instance;
+		
+		// Now that we have saved it off we need to clear it for the next operation
+		uint64Instance = BigInteger.ZERO;
+		clearDisp();
+		displayValues();
 	}
 	private void performBtnTimesActions() {
 		// Configure Button Interface for Current Operation
@@ -394,6 +456,11 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		
 		// Save off Previous Value for Operation
 		uint64Instance_SaveValue = uint64Instance;
+		
+		// Now that we have saved it off we need to clear it for the next operation
+		uint64Instance = BigInteger.ZERO;
+		clearDisp();
+		displayValues();
 	}
 	private void performBtnDivideActions() {
 		// Configure Button Interface for Current Operation
@@ -418,6 +485,11 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		
 		// Save off Previous Value for Operation
 		uint64Instance_SaveValue = uint64Instance;
+		
+		// Now that we have saved it off we need to clear it for the next operation
+		uint64Instance = BigInteger.ZERO;
+		clearDisp();
+		displayValues();
 	}
 	private void performBtnORActions() {
 		// Configure Button Interface for Current Operation
@@ -440,6 +512,11 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		
 		// Save off Previous Value for Operation
 		uint64Instance_SaveValue = uint64Instance;
+		
+		// Now that we have saved it off we need to clear it for the next operation
+		uint64Instance = BigInteger.ZERO;
+		clearDisp();
+		displayValues();
 	}
 	private void performBtnANDActions() {
 		// Configure Button Interface for Current Operation
@@ -462,6 +539,11 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		
 		// Save off Previous Value for Operation
 		uint64Instance_SaveValue = uint64Instance;
+		
+		// Now that we have saved it off we need to clear it for the next operation
+		uint64Instance = BigInteger.ZERO;
+		clearDisp();
+		displayValues();
 	}
 	private void performBtnShiftLActions() {
 		// Configure Button Interface for Current Operation
@@ -484,6 +566,11 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		
 		// Save off Previous Value for Operation
 		uint64Instance_SaveValue = uint64Instance;
+		
+		// Now that we have saved it off we need to clear it for the next operation
+		uint64Instance = BigInteger.ZERO;
+		clearDisp();
+		displayValues();
 	}
 	private void performBtnShiftRActions() {
 		// Configure Button Interface for Current Operation
@@ -506,6 +593,11 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		
 		// Save off Previous Value for Operation
 		uint64Instance_SaveValue = uint64Instance;
+		
+		// Now that we have saved it off we need to clear it for the next operation
+		uint64Instance = BigInteger.ZERO;
+		clearDisp();
+		displayValues();
 	}
 	private void performBtnXORActions() {
 		// Configure Button Interface for Current Operation
@@ -528,6 +620,11 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		
 		// Save off Previous Value for Operation
 		uint64Instance_SaveValue = uint64Instance;
+		
+		// Now that we have saved it off we need to clear it for the next operation
+		uint64Instance = BigInteger.ZERO;
+		clearDisp();
+		displayValues();
 	}
 	private void performBtnSignActions() {
 		uint64Instance = uint64Instance.negate();
@@ -555,7 +652,6 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		calculationOperationInProgress = false;
 	}
 	// -------------- Operation Drivers -------------------------
-	// NHAT CHECK THIS!!!
 	private void calcBtnPlusActions() {
 		btnClear.setText("Clear");
 		btnPlus.setVisibility(View.VISIBLE);
@@ -626,7 +722,7 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		btnEquals.setEnabled(false);
 		btnDivide.setEnabled(true);
 		
-		if(uint64Instance==BigInteger.ZERO) {
+		if(uint64Instance.equals(BigInteger.ZERO)) {
 			Toast toast = Toast.makeText(getApplicationContext(), "Cannot divide by zero!", Toast.LENGTH_SHORT);
 			toast.show();
 		}
@@ -909,7 +1005,7 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 			CustomizeDialog customizeDialog = new CustomizeDialog(this);
 			TextView title01 = (TextView)customizeDialog.findViewById(R.id.Title01);
 			String about_string = "<center><b><font color=#4682B4>ABOUT</font></b></center><br>" +
-			"<center>About ProtoDecoder</center><br><center>ProtoDec v1.5b</center>";			
+			"<center>About ProtoDecoder</center><br><center>" + R.string.versionString + "</center>";			
 			title01.setText(Html.fromHtml(about_string));
 			TextView text = (TextView) customizeDialog.findViewById(R.id.TextView01);
 			//text.setGravity(Gravity.CENTER);
@@ -1025,10 +1121,6 @@ public class ConverterActivity extends Activity implements OnClickListener, OnTo
 		
 		
 		calculationOperationInProgress = def_prefs.getBoolean("calculationOperationInProgress", true);
-		String tempst = def_prefs.getString("backgroundflag", "1");
-	
-		tempst = def_prefs.getString("userbaseflag", "8");
-		tempst = def_prefs.getString("binbitsflag", "0");
 		switch(currentMode) {
 		case DECIMAL_MODE:
 			radio_dec.setChecked(true);
