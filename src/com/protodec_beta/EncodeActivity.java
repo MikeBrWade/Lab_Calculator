@@ -44,6 +44,9 @@ public class EncodeActivity extends Activity implements OnClickListener, OnTouch
         BrowseField.setInputType(0);
         
         // Beats me what this does, have to ask mike
+        // MBW You can use this to modify this layout programtically, so if you wanted to 
+        //    add some buttons or reflow the view/layout based on events you could use this
+        //    object to do that.
         encoderScreen = (RelativeLayout)findViewById(R.id.encoderScreen);
              
     }
